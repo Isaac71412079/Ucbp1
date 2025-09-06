@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.example.ucbp1.presentation.GithubScreen
+import com.example.ucbp1.features.github.presentation.GithubScreen
+import com.example.ucbp1.navigation.AppNavigation
 import com.example.ucbp1.ui.theme.Ucbp1Theme
 
 class MainActivity : ComponentActivity() {
@@ -16,11 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Ucbp1Theme {
-                Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                    GithubScreen( modifier = Modifier.padding(innerPadding))
-                }
-            }
+            AppNavigation()
         }
     }
 }

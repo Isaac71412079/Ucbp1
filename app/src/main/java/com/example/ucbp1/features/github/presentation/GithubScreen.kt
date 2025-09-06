@@ -1,13 +1,13 @@
-package com.example.ucbp1.presentation
+package com.example.ucbp1.features.github.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,39 +18,42 @@ import coil3.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun GithubScreen(modifier: Modifier,
-                 vm : GithubViewModel = koinViewModel()
-                 ) {
+fun GithubScreen( modifier: Modifier,
+                  vm : GithubViewModel = koinViewModel()
+) {
 
     var nickname by remember { mutableStateOf("") }
 
     val state by vm.state.collectAsState()
 
     Column {
-        Text( "")
+        Text("")
         OutlinedTextField(
             value = nickname,
-            onValueChange = {
-                    it -> nickname = it
+            onValueChange = { it ->
+                nickname = it
             }
         )
-        OutlinedButton( onClick = {
+        OutlinedButton(onClick = {
             vm.fetchAlias(nickname)
         }) {
             Text("")
         }
-        when( val st = state) {
+        when (val st = state) {
             is GithubViewModel.GithubStateUI.Error -> {
-                Text(st.message )
+                Text(st.message)
             }
+
             GithubViewModel.GithubStateUI.Init -> {
-                Text("Init" )
+                Text("Init")
             }
+
             GithubViewModel.GithubStateUI.Loading -> {
-                Text("Loading" )
+                Text("Loading")
             }
+
             is GithubViewModel.GithubStateUI.Success -> {
-                Text(st.github.nickname )
+                Text(st.github.nickname)
                 AsyncImage(
                     model = st.github.pathUrl,
                     contentDescription = null,
