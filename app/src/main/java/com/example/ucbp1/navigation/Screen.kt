@@ -1,6 +1,5 @@
 package com.example.ucbp1.navigation
 
-
 sealed class Screen(val route: String) {
     object Home: Screen("home")
     object Github: Screen("github")

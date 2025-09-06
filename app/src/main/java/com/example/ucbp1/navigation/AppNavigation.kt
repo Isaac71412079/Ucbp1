@@ -7,14 +7,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.ucbp1.features.github.presentation.GithubScreen
-
+import com.example.ucbp1.features.profile.application.ProfileScreen
 @Composable
 fun AppNavigation() {
     val navController: NavHostController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Github.route
+        startDestination = Screen.Profile.route
     ) {
         composable(Screen.Github.route) {
             GithubScreen(modifier = Modifier)
@@ -23,7 +23,7 @@ fun AppNavigation() {
 
         }
         composable(Screen.Profile.route) {
-
+            ProfileScreen()
         }
     }
 }
