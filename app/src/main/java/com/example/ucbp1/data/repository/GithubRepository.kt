@@ -5,6 +5,9 @@ import com.example.ucbp1.domain.repository.IGithubRepository
 
 class GithubRepository : IGithubRepository{
     override fun findByNick(value: String): Result<UserModel> {
+        if(value.isEmpty()) {
+            return Result.failure(Exception("El campo no puede estar vacio"))
+        }
         return Result.success(UserModel("example", "https://avatars.githubusercontent.com/u/36901?v=4"))
     }
 
