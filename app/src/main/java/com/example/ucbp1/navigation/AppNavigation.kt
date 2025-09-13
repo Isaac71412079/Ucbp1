@@ -28,10 +28,12 @@ fun AppNavigation() {
         composable(Screen.Profile.route) {
             ProfileScreen()
         }
-        composable(Screen.CardExamples.route) { CardScreen() }
+        composable(Screen.CardExamples.route) {
+            CardScreen()
+        }
 
         composable(Screen.Dollar.route) {
-            DollarScreen(navController = navController)
+            DollarScreen()
         }
     }
 }

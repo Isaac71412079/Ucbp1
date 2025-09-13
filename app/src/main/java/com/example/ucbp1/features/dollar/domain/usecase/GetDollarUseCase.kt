@@ -1,13 +1,13 @@
 package com.example.ucbp1.features.dollar.domain.usecase
 
 import com.example.ucbp1.features.dollar.domain.model.Dollar
-import com.example.ucbp1.features.dollar.domain.repository.DollarRepository
+import com.example.ucbp1.features.dollar.domain.repository.IDollarRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetDollarUseCase(
-    private val dollarRepository: DollarRepository
+    val dollarRepository: IDollarRepository
 ) {
-    operator fun invoke(): Flow<Result<Dollar>> {
-        return dollarRepository.getDollarValue()
+    suspend fun invoke(): Flow<Result<Dollar>> {
+        return dollarRepository.getDollarUpdates()
     }
 }

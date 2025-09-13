@@ -1,6 +1,5 @@
 package com.example.ucbp1.features.dollar.presentation
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
@@ -8,36 +7,41 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.example.ucbp1.features.dollar.domain.model.Dollar
+import com.example.ucbp1.features.dollar.data.repository.DollarRepository
+import com.example.ucbp1.navigation.Screen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 
 class DollarViewModel(
-    private val getDollarUseCase: GetDollarUseCase
-) : ViewModel() {
+    val getDollarUseCase: GetDollarUseCase
+): ViewModel() {
 
-    private val _state = MutableStateFlow<DollarState>(DollarState.Loading)
-    val state: StateFlow<DollarState> = _state.asStateFlow()
+    sealed class DollarUIState {
+        object Loading : DollarUIState()
+        class Error(val message: String) : DollarUIState()
+        class Success(val data: Dollar) : DollarUIState()
+    }
 
-    fun loadDollarValue() {
-        viewModelScope.launch {
-            _state.value = DollarState.Loading
 
-            getDollarUseCase().collect { result ->
-                result.onSuccess { dollar ->
-                    _state.value = DollarState.Loaded(
-                        value = dollar.value,
-                        lastUpdated = dollar.lastUpdated
-                    )
+    init {
+        getDollar()
+    }
+
+
+    private val _uiState = MutableStateFlow<DollarUIState>(DollarUIState.Loading)
+    val uiState: StateFlow<DollarUIState> = _uiState.asStateFlow()
+
+
+    fun getDollar() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getDollarUseCase.invoke().collect { result ->
+                result.onSuccess { data ->
+                    _uiState.value = DollarUIState.Success(data)
                 }.onFailure { e ->
-                    _state.value = DollarState.Error(
-                        message = e.message ?: "Error al cargar el tipo de cambio"
-                    )
+                    _uiState.value = DollarUIState.Error(e.message ?: "Error desconocido")
                 }
             }
         }
     }
-}
-
-sealed class DollarState {
-    object Loading : DollarState()
-    data class Loaded(val value: Float, val lastUpdated: String) : DollarState()
-    data class Error(val message: String) : DollarState()
 }

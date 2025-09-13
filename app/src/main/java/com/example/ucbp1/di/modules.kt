@@ -1,5 +1,8 @@
 package com.example.ucbp1.di
 
+import com.example.ucbp1.features.dollar.data.repository.DollarRepository
+import com.example.ucbp1.features.dollar.datasource.RealTimeRemoteDataSource
+import com.example.ucbp1.features.dollar.domain.repository.IDollarRepository
 import com.example.ucbp1.features.github.data.api.GithubService
 import com.example.ucbp1.features.github.data.datasource.GithubRemoteDataSource
 import com.example.ucbp1.features.github.data.repository.GithubRepository
@@ -16,8 +19,6 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import com.example.ucbp1.features.dollar.data.DollarRepositoryImpl
-import com.example.ucbp1.features.dollar.domain.repository.DollarRepository
 import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
 import com.example.ucbp1.features.dollar.presentation.DollarViewModel
 val appModule = module {
@@ -54,8 +55,6 @@ val appModule = module {
     //        .create(MovieService::class.java)
     //}
 
-    single<DollarRepository> { DollarRepositoryImpl() }
-
     single{ GithubRemoteDataSource(get()) }
     single<IGithubRepository>{ GithubRepository(get()) }
 
@@ -66,9 +65,8 @@ val appModule = module {
     factory { GetProfileUseCase(get()) }
     viewModel { ProfileViewModel(get()) }
 
+    single { RealTimeRemoteDataSource() }
+    single<IDollarRepository> { DollarRepository(get()) }
     factory { GetDollarUseCase(get()) }
     viewModel { DollarViewModel(get()) }
-
-
-
 }

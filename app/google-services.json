@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "946606689303",
+    "project_id": "ucbp1-c4240",
+    "storage_bucket": "ucbp1-c4240.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:946606689303:android:6f49f32ab48c9d643ce052",
+        "android_client_info": {
+          "package_name": "com.example.ucbp1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVRorXz9h_BkBaAf0pbL0MrU61rZwAXgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
