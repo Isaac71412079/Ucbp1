@@ -57,11 +57,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation (libs.koin.android)
     implementation (libs.koin.androidx.navigation)
     implementation (libs.koin.androidx.compose)
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
     implementation(libs.androidx.navigation.compose)
-
 }
