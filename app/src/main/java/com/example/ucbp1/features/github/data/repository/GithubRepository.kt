@@ -20,7 +20,10 @@ class GithubRepository(
                     it ->
                 return Result.success(UserModel(
                     nickname = it.login,
-                    pathUrl = it.url
+                    pathUrl = it.url,
+                    name = it.name ?: "Sin nombre",
+                    company = it.company ?: "Sin compañía",
+                    bio = it.bio ?: "Sin bio"
                 ))
             },
             onFailure = { exception ->

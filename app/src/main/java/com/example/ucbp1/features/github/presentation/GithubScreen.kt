@@ -16,6 +16,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 
 @Composable
 fun GithubScreen( modifier: Modifier,
@@ -26,8 +29,12 @@ fun GithubScreen( modifier: Modifier,
 
     val state by vm.state.collectAsState()
 
-    Column {
-        Text("")
+    Column (
+        modifier = modifier.fillMaxSize(), // Ocupa toda la pantalla
+        verticalArrangement = Arrangement.Center, // Centra verticalmente
+        horizontalAlignment = Alignment.CenterHorizontally // Centra horizontalmente
+    ){
+        Text("Github User:")
         OutlinedTextField(
             value = nickname,
             onValueChange = { it ->
@@ -37,7 +44,7 @@ fun GithubScreen( modifier: Modifier,
         OutlinedButton(onClick = {
             vm.fetchAlias(nickname)
         }) {
-            Text("")
+            Text("Search")
         }
         when (val st = state) {
             is GithubViewModel.GithubStateUI.Error -> {
@@ -53,14 +60,17 @@ fun GithubScreen( modifier: Modifier,
             }
 
             is GithubViewModel.GithubStateUI.Success -> {
-                Text(st.github.nickname)
+                //Text(st.github.nickname)
                 AsyncImage(
                     model = st.github.pathUrl,
                     contentDescription = null,
-                    modifier = Modifier.size(100.dp),
+                    modifier = Modifier.size(170.dp),
                     contentScale = ContentScale.Crop,
                 )
-                Text(st.github.pathUrl)
+                Text(st.github.name ?: "Sin nombre")
+                Text(st.github.company ?: "Sin compañía")
+                Text(st.github.bio ?: "Sin bio")
+                //Text(st.github.pathUrl)
             }
         }
     }
