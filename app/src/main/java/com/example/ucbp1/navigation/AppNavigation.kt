@@ -9,13 +9,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ucbp1.features.cardexample.presentation.CardScreen
 import com.example.ucbp1.features.github.presentation.GithubScreen
 import com.example.ucbp1.features.profile.application.ProfileScreen
+import com.example.ucbp1.features.dollar.presentation.DollarScreen
+
 @Composable
 fun AppNavigation() {
     val navController: NavHostController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Github.route
+        startDestination = Screen.Dollar.route
     ) {
         composable(Screen.Github.route) {
             GithubScreen(modifier = Modifier)
@@ -26,7 +28,10 @@ fun AppNavigation() {
         composable(Screen.Profile.route) {
             ProfileScreen()
         }
-
         composable(Screen.CardExamples.route) { CardScreen() }
+
+        composable(Screen.Dollar.route) {
+            DollarScreen(navController = navController)
+        }
     }
 }

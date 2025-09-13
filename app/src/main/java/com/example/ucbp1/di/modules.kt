@@ -16,7 +16,10 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-
+import com.example.ucbp1.features.dollar.data.DollarRepositoryImpl
+import com.example.ucbp1.features.dollar.domain.repository.DollarRepository
+import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
+import com.example.ucbp1.features.dollar.presentation.DollarViewModel
 val appModule = module {
 
 
@@ -42,6 +45,17 @@ val appModule = module {
     single<GithubService> {
         get<Retrofit>().create(GithubService::class.java)
     }
+
+    // MovieDB Service (base URL diferente)
+    //single<MovieService> {
+    //    get<Retrofit>().newBuilder()
+    //        .baseUrl("https://api.themoviedb.org/3/")
+    //        .build()
+    //        .create(MovieService::class.java)
+    //}
+
+    single<DollarRepository> { DollarRepositoryImpl() }
+
     single{ GithubRemoteDataSource(get()) }
     single<IGithubRepository>{ GithubRepository(get()) }
 
@@ -51,6 +65,9 @@ val appModule = module {
     single<IProfileRepository> { ProfileRepository() }
     factory { GetProfileUseCase(get()) }
     viewModel { ProfileViewModel(get()) }
+
+    factory { GetDollarUseCase(get()) }
+    viewModel { DollarViewModel(get()) }
 
 
 
