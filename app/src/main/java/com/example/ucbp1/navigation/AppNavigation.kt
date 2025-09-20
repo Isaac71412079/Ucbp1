@@ -10,6 +10,8 @@ import com.example.ucbp1.features.cardexample.presentation.CardScreen
 import com.example.ucbp1.features.github.presentation.GithubScreen
 import com.example.ucbp1.features.profile.application.ProfileScreen
 import com.example.ucbp1.features.dollar.presentation.DollarScreen
+import com.example.ucbp1.features.movie.presentation.PopularMoviesScreen
+
 
 @Composable
 fun AppNavigation() {
@@ -17,7 +19,7 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Dollar.route
+        startDestination = Screen.PopularMovies.route
     ) {
         composable(Screen.Github.route) {
             GithubScreen(modifier = Modifier)
@@ -35,5 +37,7 @@ fun AppNavigation() {
         composable(Screen.Dollar.route) {
             DollarScreen()
         }
+
+        composable(Screen.PopularMovies.route) { PopularMoviesScreen() }
     }
 }
