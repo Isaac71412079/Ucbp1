@@ -1,7 +1,10 @@
 package com.example.ucbp1.di
 
+import com.example.ucbp1.features.dollar.data.database.AppRoomDatabase
+import com.example.ucbp1.features.dollar.data.datasource.DollarLocalDataSource
 import com.example.ucbp1.features.dollar.data.repository.DollarRepository
 import com.example.ucbp1.features.dollar.datasource.RealTimeRemoteDataSource
+import com.example.ucbp1.features.dollar.data.datasource.RealTimeRemoteDataSource
 import com.example.ucbp1.features.dollar.domain.repository.IDollarRepository
 import com.example.ucbp1.features.github.data.api.GithubService
 import com.example.ucbp1.features.github.data.datasource.GithubRemoteDataSource
@@ -22,7 +25,6 @@ import java.util.concurrent.TimeUnit
 import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
 import com.example.ucbp1.features.dollar.presentation.DollarViewModel
 val appModule = module {
-
 
     // OkHttpClient
     single {
@@ -47,14 +49,6 @@ val appModule = module {
         get<Retrofit>().create(GithubService::class.java)
     }
 
-    // MovieDB Service (base URL diferente)
-    //single<MovieService> {
-    //    get<Retrofit>().newBuilder()
-    //        .baseUrl("https://api.themoviedb.org/3/")
-    //        .build()
-    //        .create(MovieService::class.java)
-    //}
-
     single{ GithubRemoteDataSource(get()) }
     single<IGithubRepository>{ GithubRepository(get()) }
 
@@ -65,8 +59,11 @@ val appModule = module {
     factory { GetProfileUseCase(get()) }
     viewModel { ProfileViewModel(get()) }
 
+    single { AppRoomDatabase.getDatabase(get()) }
+    single { get<AppRoomDatabase>().dollarDao() }
     single { RealTimeRemoteDataSource() }
-    single<IDollarRepository> { DollarRepository(get()) }
+    single { DollarLocalDataSource(get()) }
+    single<IDollarRepository> { DollarRepository(get(), get()) }
     factory { GetDollarUseCase(get()) }
     viewModel { DollarViewModel(get()) }
 }
