@@ -20,6 +20,7 @@ firebaseDatabase = "22.0.0"
 roomCommonJvm = "2.8.0"
 ksp = "2.0.20-1.0.24"
 room = "2.8.0"
+firebaseMessaging = "25.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +47,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navcompose"}
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 #room
 room-runtime = { group="androidx.room", name="room-runtime", version.ref="room"}
