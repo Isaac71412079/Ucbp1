@@ -23,25 +23,17 @@ class DollarViewModel(
         class Success(val data: Dollar) : DollarUIState()
     }
 
-
     init {
         getDollar()
     }
 
-
     private val _uiState = MutableStateFlow<DollarUIState>(DollarUIState.Loading)
     val uiState: StateFlow<DollarUIState> = _uiState.asStateFlow()
 
-
     fun getDollar() {
         viewModelScope.launch(Dispatchers.IO) {
-            getDollarUseCase.invoke().collect { result ->
-                result.onSuccess { data ->
-                    _uiState.value = DollarUIState.Success(data)
-                }.onFailure { e ->
-                    _uiState.value = DollarUIState.Error(e.message ?: "Error desconocido")
-                }
-            }
+            getDollarUseCase.invoke().collect {
+                    data -> _uiState.value = DollarUIState.Success(data) }
         }
     }
 }
