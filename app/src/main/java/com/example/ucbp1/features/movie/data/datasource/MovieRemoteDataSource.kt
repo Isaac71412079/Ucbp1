@@ -4,11 +4,11 @@ import com.example.ucbp1.features.movie.data.api.MovieService
 import com.example.ucbp1.features.movie.domain.model.MovieModel
 
 class MovieRemoteDataSource(
-    private val movieServie: MovieService,
+    private val movieService: MovieService,
     private val apiKey: String
 ) {
     suspend fun fetchPopularMovies(): Result<List<MovieModel>> {
-        val response = movieServie.fetchPopularMovies(apiKey = apiKey)
+        val response = movieService.fetchPopularMovies(apiKey = apiKey)
         return if (response.isSuccessful) {
             val moviePage = response.body()
             if (moviePage != null) {
@@ -16,7 +16,7 @@ class MovieRemoteDataSource(
             }
             Result.success(emptyList())
         } else {
-            Result.failure(Exception("Error"))
+            Result.failure(Exception("Error para peliculas"))
         }
     }
 }

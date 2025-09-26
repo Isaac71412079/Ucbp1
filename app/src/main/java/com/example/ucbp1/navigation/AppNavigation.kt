@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.ucbp1.features.cardexample.presentation.CardScreen
 import com.example.ucbp1.features.github.presentation.GithubScreen
 import com.example.ucbp1.features.profile.application.ProfileScreen
 import com.example.ucbp1.features.dollar.presentation.DollarScreen
@@ -30,14 +29,13 @@ fun AppNavigation() {
         composable(Screen.Profile.route) {
             ProfileScreen()
         }
-        composable(Screen.CardExamples.route) {
-            CardScreen()
-        }
 
         composable(Screen.Dollar.route) {
             DollarScreen()
         }
 
-        composable(Screen.PopularMovies.route) { PopularMoviesScreen() }
+        composable(Screen.PopularMovies.route) {
+            PopularMoviesScreen()
+        }
     }
 }

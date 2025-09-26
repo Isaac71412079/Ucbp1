@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PopularMoviesViewModel(
     private val fetchPopularMovies: FetchPopularMoviesUseCase
@@ -24,15 +25,17 @@ class PopularMoviesViewModel(
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     fun fetchPopularMovies() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _state.value = UiState.Loading
-            val result = fetchPopularMovies.invoke()
+            val result = withContext(Dispatchers.IO) {
+                fetchPopularMovies.invoke()
+            }
             result.fold(
-                onSuccess = {
-                    _state.value = UiState.Success(it)
+                onSuccess = { movies ->
+                    _state.value = UiState.Success(movies)
                 },
                 onFailure = {
-                    _state.value = UiState.Error("error")
+                    _state.value = UiState.Error("Error cargando películas")
                 }
             )
         }
