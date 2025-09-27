@@ -3,12 +3,12 @@ package com.example.ucbp1.features.profile.domain.usecase
 import com.example.ucbp1.features.profile.domain.model.ProfileModel
 import com.example.ucbp1.features.profile.domain.repository.IProfileRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 
 class GetProfileUseCase(
-    val repository: IProfileRepository
+    private val repository: IProfileRepository
 ) {
-    suspend fun invoke(): Result<ProfileModel> {
-        delay(3000)
+    operator fun invoke(): Flow<Result<ProfileModel>> {
         return repository.fetchData()
     }
 }

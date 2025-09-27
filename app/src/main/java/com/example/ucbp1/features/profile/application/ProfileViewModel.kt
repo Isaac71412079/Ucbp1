@@ -12,33 +12,44 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.suspendCoroutine
 class ProfileViewModel(
-    val profileUseCase: GetProfileUseCase
-): ViewModel() {
-    // UI STATE
-    sealed class ProfileUiState {
-        object Init: ProfileUiState()
-        object Loading: ProfileUiState()
-        class Error(val message: String): ProfileUiState()
-        class Success(val profile: ProfileModel): ProfileUiState()
+
+    private val getProfileUseCase: GetProfileUseCase
+) : ViewModel() {
+
+    private val _state = MutableStateFlow(ProfileState())
+    val state: StateFlow<ProfileState> = _state.asStateFlow()
+
+    init {
+        loadProfileData()
+
     }
-
-    // variable mutable y observable
-    private var _state = MutableStateFlow<ProfileUiState>(ProfileUiState.Init)
-    val state : StateFlow<ProfileUiState> = _state.asStateFlow()
-
-    // evento o eventos desencadenadores
-    fun showProfile() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.value = ProfileUiState.Loading
-            val resultProfile = profileUseCase.invoke()
-            resultProfile.fold(
-                onSuccess = {
-                    _state.value = ProfileUiState.Success(it)
-                },
-                onFailure = {
-                    _state.value = ProfileUiState.Error(it.message.toString())
+    fun loadProfileData() {
+        viewModelScope.launch {
+            getProfileUseCase().collect { result ->
+                result.onSuccess { profile ->
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        userName = profile.name.value,
+                        userEmail = profile.email.value,
+                        avatarUrl = profile.avatarUrl.value
+                    )
+                }.onFailure { e ->
+                    _state.value = _state.value.copy(
+                        error = e.message ?: "Error al cargar perfil",
+                        isLoading = false
+                    )
                 }
-            )
+            }
         }
     }
+
 }
+
+data class ProfileState(
+    val userName: String = "",
+    val userEmail: String = "",
+    val avatarUrl: String? = null,
+    val dollarValue: Float? = null,
+    val isLoading: Boolean = true,
+    val error: String? = null
+)

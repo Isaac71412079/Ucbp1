@@ -19,14 +19,12 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Dollar.route
+        startDestination = Screen.Home.route
     ) {
         composable(Screen.Github.route) {
             GithubScreen(modifier = Modifier)
         }
-        composable(Screen.Home.route) {
 
-        }
         composable(Screen.Profile.route) {
             ProfileScreen()
         }
@@ -43,7 +41,7 @@ fun AppNavigation() {
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true } // 👈 borra la pantalla de login del back stack
+                        popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 }
             )
@@ -52,6 +50,5 @@ fun AppNavigation() {
         composable(Screen.Home.route) {
             HomeScreen(navController = navController)
         }
-
     }
 }

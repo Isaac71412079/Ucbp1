@@ -1,9 +1,10 @@
 package com.example.ucbp1.features.profile.application
 
-
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,48 +32,53 @@ fun ProfileScreen(
     val state = profileViewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        profileViewModel.showProfile()
+        profileViewModel.loadProfileData()
     }
 
-    when(val st = state.value) {
-        is ProfileViewModel.ProfileUiState.Error -> Text(st.message)
-        ProfileViewModel.ProfileUiState.Init -> Text("")
-        ProfileViewModel.ProfileUiState.Loading -> CircularProgressIndicator()
-        is ProfileViewModel.ProfileUiState.Success -> {
+    val profileState = state.value
+
+    when {
+        profileState.isLoading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        profileState.error != null -> {
+            Text(
+                text = profileState.error,
+                color = Color.Red,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        else -> {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(70.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 AsyncImage(
-                    model = st.profile.pathUrl,
-                    contentDescription = "Foto de perfil de ${st.profile.name}",
+                    model = profileState.avatarUrl ?: "https://example.com/default-avatar.png",
+                    contentDescription = "Foto de perfil de ${profileState.userName}",
                     modifier = Modifier
                         .size(120.dp)
-                        .clip(CircleShape) // Opcional: imagen circular
+                        .clip(CircleShape)
                         .border(2.dp, Color.Gray, CircleShape),
                     contentScale = ContentScale.Crop
                 )
 
                 Text(
-                    text = st.profile.name,
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                Text(
-                    text = st.profile.email,
+                    text = profileState.userName,
                     style = MaterialTheme.typography.bodyMedium
                 )
 
                 Text(
-                    text = st.profile.cellphone,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-
-                Text(
-                    text = st.profile.summary,
+                    text = profileState.userEmail,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 8.dp),
                     textAlign = TextAlign.Center
@@ -80,6 +86,4 @@ fun ProfileScreen(
             }
         }
     }
-
-
 }
