@@ -13,7 +13,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = koinViewModel()
+    viewModel: LoginViewModel = koinViewModel(),
+    onLoginSuccess: () -> Unit = {} // 👈 agregamos callback
 ) {
     val email = viewModel.email
     val password = viewModel.password
@@ -64,7 +65,8 @@ fun LoginScreen(
                     CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
                 }
                 is LoginUIState.Success -> {
-                    Text("¡Login Exitoso!", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 16.dp))
+                    // ✅ Aquí navegamos a Home
+                    onLoginSuccess()
                 }
                 is LoginUIState.Error -> {
                     Text(state.message, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 16.dp))

@@ -11,6 +11,7 @@ import com.example.ucbp1.features.profile.application.ProfileScreen
 import com.example.ucbp1.features.dollar.presentation.DollarScreen
 import com.example.ucbp1.features.movie.presentation.PopularMoviesScreen
 import com.example.ucbp1.features.login.presentation.LoginScreen
+import com.example.ucbp1.features.home.presentation.HomeScreen
 
 @Composable
 fun AppNavigation() {
@@ -39,7 +40,18 @@ fun AppNavigation() {
         }
 
         composable(Screen.Login.route) {
-            LoginScreen()
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true } // 👈 borra la pantalla de login del back stack
+                    }
+                }
+            )
         }
+
+        composable(Screen.Home.route) {
+            HomeScreen(navController = navController)
+        }
+
     }
 }
