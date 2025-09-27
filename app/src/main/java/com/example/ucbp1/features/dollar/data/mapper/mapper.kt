@@ -5,13 +5,20 @@ import com.example.ucbp1.features.dollar.domain.model.Dollar
 
 fun DollarEntity.toModel() : Dollar {
     return Dollar(
-        official = official,
-        parallel = parallel
+        officialBuy = officialBuy,
+        officialSell = officialSell,
+        parallelBuy = parallelBuy,
+        parallelSell = parallelSell,
+        lastUpdated = timestamp
     )
 }
 
 fun Dollar.toEntity() : DollarEntity {
     return DollarEntity(
-        official = official,
-        parallel = parallel)
+        officialBuy = officialBuy,
+        officialSell = officialSell,
+        parallelBuy = parallelBuy,
+        parallelSell = parallelSell,
+        timestamp = lastUpdated ?: System.currentTimeMillis()
+    )
 }

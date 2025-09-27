@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.layout.fillMaxWidth
+
 @Composable
 fun DollarScreen(
     viewModelDollar: DollarViewModel = koinViewModel()
@@ -43,8 +44,6 @@ fun DollarScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
-
         when (val stateValue = state) {
             DollarViewModel.DollarUIState.Loading -> CircularProgressIndicator()
             is DollarViewModel.DollarUIState.Error -> Text(
@@ -52,40 +51,87 @@ fun DollarScreen(
                 color = MaterialTheme.colorScheme.error
             )
             is DollarViewModel.DollarUIState.Success -> {
-                stateValue.data.official?.let { official ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Dólar Oficial", style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(official, style = MaterialTheme.typography.headlineSmall)
-                        }
-                    }
-                }
+                val dollar = stateValue.data
 
-                stateValue.data.parallel?.let { parallel ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Dólar Paralelo", style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(parallel, style = MaterialTheme.typography.headlineSmall)
-                        }
-                    }
+                DollarCard(
+                    title = "Dólar Oficial",
+                    buy = dollar.officialBuy,
+                    sell = dollar.officialSell
+                )
+
+                DollarCard(
+                    title = "Dólar Paralelo",
+                    buy = dollar.parallelBuy,
+                    sell = dollar.parallelSell
+                )
+
+                dollar.lastUpdated?.let { timestamp ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Última actualización: ${formatDate(timestamp)}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+fun DollarCard(title: String, buy: String?, sell: String?) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Título centrado
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            // Row para alinear Compra y Venta
+            androidx.compose.foundation.layout.Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(horizontalAlignment = Alignment.Start) {
+                    Text(
+                        text = "Compra",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = buy ?: "--",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Venta",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = sell ?: "--",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+        }
+    }
+}
+
+fun formatDate(timestamp: Long): String {
+    val sdf = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
+    return sdf.format(java.util.Date(timestamp))
 }
