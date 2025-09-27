@@ -1,31 +1,108 @@
 package com.example.ucbp1.features.movie.presentation
 
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+// import org.koin.androidx.compose.koinViewModel // O la forma de obtener ViewModel que uses
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PopularMoviesScreen(
-    popularMoviesViewModel: PopularMoviesViewModel = koinViewModel()
+    viewModel: PopularMoviesViewModel // Inyectado por Koin, o usa koinViewModel()
 ) {
-    val state = popularMoviesViewModel.state.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        popularMoviesViewModel.fetchPopularMovies()
-    }
-
-    when (val s = state.value) {
-        is PopularMoviesViewModel.UiState.Error -> {
-            Text(s.message)
+    // Para mostrar errores en el Snackbar
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { errorMessage ->
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = errorMessage,
+                    duration = SnackbarDuration.Short
+                )
+            }
+            // Considera limpiar el error en el ViewModel después de mostrarlo
         }
-        is PopularMoviesViewModel.UiState.Loading ->
-            CircularProgressIndicator()
-        is PopularMoviesViewModel.UiState.Success ->
-            PopularMoviesView(movies = s.movies)
-
     }
 
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Películas Populares") },
+                actions = {
+                    if (uiState.isUserInitiatedRefresh) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        IconButton(onClick = { viewModel.refreshMoviesFromServer() }) {
+                            Icon(
+                                imageVector = Icons.Filled.Refresh,
+                                contentDescription = "Refrescar películas"
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            when {
+                // Estado de carga inicial o si la lista está vacía y se está cargando/refrescando
+                uiState.isLoading || (uiState.movies.isEmpty() && uiState.isUserInitiatedRefresh) -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+                // Si no está cargando y la lista está vacía (podría ser por error o sin resultados)
+                uiState.movies.isEmpty() && !uiState.isLoading && !uiState.isUserInitiatedRefresh -> {
+                    // Si hay un error y la lista está vacía, el Snackbar ya lo maneja.
+                    // Aquí mostramos "No hay películas" si no hay error pero la lista está vacía.
+                    if (uiState.error == null) {
+                        Text(
+                            "No se encontraron películas.",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                    // Si hay un error, el Box estará vacío y el Snackbar se mostrará.
+                }
+                // Si hay películas, se muestran
+                uiState.movies.isNotEmpty() -> {
+                    PopularMoviesView(
+                        movies = uiState.movies,
+                        onLikeClicked = { movieId ->
+                            viewModel.onLikeClicked(movieId)
+                        },
+                        onMovieCardClicked = { movie ->
+                            // TODO: Implementar navegación a detalles de la película
+                            // Ejemplo: navController.navigate("movieDetail/${movie.id}")
+                            println("Película clickeada: ${movie.title} (ID: ${movie.id})")
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
+

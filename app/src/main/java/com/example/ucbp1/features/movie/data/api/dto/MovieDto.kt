@@ -3,7 +3,12 @@ package com.example.ucbp1.features.movie.data.api.dto
 import com.google.gson.annotations.SerializedName
 
 data class MovieDto(
-    @SerializedName("poster_path")
-    val pathUrl: String,
-    val title: String
+    @SerializedName("id") val id: Int,
+    @SerializedName("title") val title: String,
+    @SerializedName("overview") val overview: String,
+    @SerializedName("poster_path") val posterPath: String?,
+    @SerializedName("release_date") val releaseDate: String?,
+    @SerializedName("vote_average") val voteAverage: Double?,
+    @SerializedName("popularity") val popularity: Double?
+    // Agrega otros campos que necesites de la API y que quieras mostrar o guardar
 )

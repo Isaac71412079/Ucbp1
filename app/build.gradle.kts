@@ -16,7 +16,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
+        buildConfigField("String", "TMDB_API_KEY", "\"fa3e844ce31744388e07fa47c7c5d8c3\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

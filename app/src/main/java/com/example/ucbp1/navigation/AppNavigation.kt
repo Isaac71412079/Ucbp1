@@ -12,6 +12,8 @@ import com.example.ucbp1.features.dollar.presentation.DollarScreen
 import com.example.ucbp1.features.movie.presentation.PopularMoviesScreen
 import com.example.ucbp1.features.login.presentation.LoginScreen
 import com.example.ucbp1.features.home.presentation.HomeScreen
+import com.example.ucbp1.features.movie.presentation.PopularMoviesViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppNavigation() {
@@ -34,7 +36,9 @@ fun AppNavigation() {
         }
 
         composable(Screen.PopularMovies.route) {
-            PopularMoviesScreen()
+            val popularMoviesViewModel: PopularMoviesViewModel = koinViewModel()
+            PopularMoviesScreen(viewModel = popularMoviesViewModel)
+
         }
 
         composable(Screen.Login.route) {
