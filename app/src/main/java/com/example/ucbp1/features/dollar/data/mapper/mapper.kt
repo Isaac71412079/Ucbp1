@@ -6,12 +6,12 @@ import com.example.ucbp1.features.dollar.domain.model.Dollar
 fun DollarEntity.toModel() : Dollar {
     return Dollar(
         official = official,
-        lastUpdated = lastUpdated
+        parallel = parallel
     )
 }
 
 fun Dollar.toEntity() : DollarEntity {
     return DollarEntity(
         official = official,
-        lastUpdated = lastUpdated)
+        parallel = parallel)
 }

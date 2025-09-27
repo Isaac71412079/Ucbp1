@@ -13,8 +13,8 @@ data class DollarEntity(
     @ColumnInfo(name = "official")
     var official: String? = null,
 
-    @ColumnInfo(name = "lastUpdated")
-    var lastUpdated: String? = null,
+    @ColumnInfo(name = "parallel")
+    var parallel: String? = null,
 
     @ColumnInfo(name = "timestamp")
     var timestamp: Long = 0)

@@ -18,7 +18,7 @@ class DollarLocalDataSource(
     suspend fun deleteAll() {
         dao.deleteAll()
     }
-    suspend fun inserTDollars(list: List<Dollar>) {
+    suspend fun insertTDollars(list: List<Dollar>) {
         val dollarEntity = list.map { it.toEntity() }
         dao.insertDollars(dollarEntity)
     }
