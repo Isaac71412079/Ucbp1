@@ -4,12 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ucbp1.features.profile.domain.model.ProfileModel
 import com.example.ucbp1.features.profile.domain.usecase.GetProfileUseCase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
+import kotlin.coroutines.suspendCoroutine
 class ProfileViewModel(
     val profileUseCase: GetProfileUseCase
 ): ViewModel() {
