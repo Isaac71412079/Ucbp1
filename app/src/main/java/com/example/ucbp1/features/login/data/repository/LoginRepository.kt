@@ -8,7 +8,7 @@ class LoginRepository : ILoginRepository {
     override suspend fun login(email: String, pass: String): LoginResult {
         delay(1000)
 
-        return if (email == "isaac@gmail.com" && pass == "admin") {
+        return if (email == "isaac.rivero@ucb.edu.bo" && pass == "isaac") {
             LoginResult.Success
         } else {
             LoginResult.Failure.InvalidCredentials

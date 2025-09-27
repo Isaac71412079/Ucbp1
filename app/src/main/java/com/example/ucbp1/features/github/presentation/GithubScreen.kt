@@ -19,20 +19,21 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
-
+import com.example.ucbp1.navigation.Screen
+import androidx.navigation.NavController
 @Composable
 fun GithubScreen( modifier: Modifier,
                   vm : GithubViewModel = koinViewModel()
 ) {
 
     var nickname by remember { mutableStateOf("") }
-
     val state by vm.state.collectAsState()
 
     Column (
         modifier = modifier.fillMaxSize(), // Ocupa toda la pantalla
         verticalArrangement = Arrangement.Center, // Centra verticalmente
         horizontalAlignment = Alignment.CenterHorizontally // Centra horizontalmente
+
     ){
         Text("Github User:")
         OutlinedTextField(
@@ -64,7 +65,7 @@ fun GithubScreen( modifier: Modifier,
                 AsyncImage(
                     model = st.github.pathUrl,
                     contentDescription = null,
-                    modifier = Modifier.size(170.dp),
+                    modifier = Modifier.size(200.dp),
                     contentScale = ContentScale.Crop,
                 )
                 Text(st.github.name ?: "Sin nombre")
