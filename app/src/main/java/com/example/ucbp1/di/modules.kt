@@ -22,6 +22,10 @@ import com.example.ucbp1.features.profile.application.ProfileViewModel
 import com.example.ucbp1.features.profile.data.repository.ProfileRepository
 import com.example.ucbp1.features.profile.domain.repository.IProfileRepository
 import com.example.ucbp1.features.profile.domain.usecase.GetProfileUseCase
+import com.example.ucbp1.features.login.data.repository.LoginRepository
+import com.example.ucbp1.features.login.domain.repository.ILoginRepository
+import com.example.ucbp1.features.login.domain.usecase.LoginUseCase
+import com.example.ucbp1.features.login.presentation.LoginViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidApplication
@@ -53,7 +57,7 @@ val appModule = module {
             .build()
     }
 
-    // Retrofit
+    // Retrofit github
     single(named(NetworkConstants.RETROFIT_GITHUB)) {
         Retrofit.Builder()
             .baseUrl(NetworkConstants.GITHUB_BASE_URL)
@@ -62,7 +66,7 @@ val appModule = module {
             .build()
     }
 
-    // Retrofit
+    // Retrofit movies
     single(named(NetworkConstants.RETROFIT_MOVIE)) {
         Retrofit.Builder()
             .baseUrl(NetworkConstants.MOVIE_BASE_URL)
@@ -75,6 +79,11 @@ val appModule = module {
     single<GithubService> {
         get<Retrofit>( named(NetworkConstants.RETROFIT_GITHUB)).create(GithubService::class.java)
     }
+
+    // login
+    single<ILoginRepository> { LoginRepository() }
+    factory { LoginUseCase(get()) }
+    viewModel { LoginViewModel(get()) }
 
     single{ GithubRemoteDataSource(get()) }
     single<IGithubRepository>{ GithubRepository(get()) }
