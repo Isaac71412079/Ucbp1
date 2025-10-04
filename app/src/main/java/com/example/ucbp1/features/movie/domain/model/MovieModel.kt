@@ -4,7 +4,7 @@ data class MovieModel(
     val id: Int,
     val title: String,
     val overview: String,
-    val posterUrl: String?, // URL completa del póster
+    val posterUrl: String?,
     val releaseDate: String?,
     val isLiked: Boolean
 )

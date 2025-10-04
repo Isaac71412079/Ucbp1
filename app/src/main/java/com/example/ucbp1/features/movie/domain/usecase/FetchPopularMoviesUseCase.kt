@@ -17,7 +17,6 @@ class FetchPopularMoviesUseCase(
     }
 }
 
-// Podrías crear un ToggleMovieLikeUseCase también si prefieres:
 class ToggleMovieLikeUseCase(
     private val movieRepository: IMovieRepository
 ) {

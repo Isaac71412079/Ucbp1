@@ -17,7 +17,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-// import org.koin.androidx.compose.koinViewModel // O la forma de obtener ViewModel que uses
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
@@ -71,14 +70,11 @@ fun PopularMoviesScreen(
                 .fillMaxSize()
         ) {
             when {
-                // Estado de carga inicial o si la lista está vacía y se está cargando/refrescando
                 uiState.isLoading || (uiState.movies.isEmpty() && uiState.isUserInitiatedRefresh) -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-                // Si no está cargando y la lista está vacía (podría ser por error o sin resultados)
                 uiState.movies.isEmpty() && !uiState.isLoading && !uiState.isUserInitiatedRefresh -> {
-                    // Si hay un error y la lista está vacía, el Snackbar ya lo maneja.
-                    // Aquí mostramos "No hay películas" si no hay error pero la lista está vacía.
+
                     if (uiState.error == null) {
                         Text(
                             "No se encontraron películas.",
@@ -87,7 +83,7 @@ fun PopularMoviesScreen(
                     }
                     // Si hay un error, el Box estará vacío y el Snackbar se mostrará.
                 }
-                // Si hay películas, se muestran
+
                 uiState.movies.isNotEmpty() -> {
                     PopularMoviesView(
                         movies = uiState.movies,

@@ -9,8 +9,8 @@ import com.example.ucbp1.features.movie.data.database.entity.MovieEntity
 
 @Database(
     entities = [MovieEntity::class],
-    version = 1, // Incrementa si cambias el esquema
-    exportSchema = false // Recomendable poner a true para producción y versionar esquemas
+    version = 1,
+    exportSchema = false
 )
 abstract class AppRoomDataBase : RoomDatabase() {
 
@@ -25,10 +25,8 @@ abstract class AppRoomDataBase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppRoomDataBase::class.java,
-                    "movie_feature_database" // Nombre específico para esta BD de feature
+                    "movie_feature_database"
                 )
-                    // Para desarrollo, si cambias el esquema, esto borra y recrea la BD
-                    // En producción, usa migraciones.
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance

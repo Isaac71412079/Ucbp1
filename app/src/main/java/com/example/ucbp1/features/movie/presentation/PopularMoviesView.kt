@@ -65,15 +65,14 @@ fun CardMovie(
 ) {
     OutlinedCard(
         modifier = Modifier
-            // .padding(4.dp) // El padding general se maneja en LazyVerticalGrid
-            .fillMaxSize() // La Card debería intentar llenar el espacio de la celda
-            .clickable { onCardClicked() }, // Hacer toda la tarjeta clickeable
-        shape = MaterialTheme.shapes.medium, // Usar formas del tema
+
+            .fillMaxSize()
+            .clickable { onCardClicked() },
+        shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
-            // No es necesario fillMaxSize aquí si OutlinedCard ya lo hace,
-            // pero sí para el contenido interno si quieres que se expanda.
+
             modifier = Modifier.fillMaxWidth(), // Para que el contenido se expanda horizontalmente
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -81,20 +80,16 @@ fun CardMovie(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(movie.posterUrl ?: "https://via.placeholder.com/200x300?text=No+Image")
-                        //.crossfade(true)
-                        // .placeholder(R.drawable.placeholder_image) // Tus placeholders
-                        // .error(R.drawable.error_image)
                         .build(),
                     contentDescription = movie.title,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(2f / 3f), // Relación de aspecto común para pósters
+                        .aspectRatio(2f / 3f),
                     contentScale = ContentScale.Crop
                 )
-                // Botón de Like superpuesto
                 IconButton(
                     onClick = onLikeClicked,
-                    modifier = Modifier.padding(4.dp) // Pequeño padding para el botón
+                    modifier = Modifier.padding(4.dp)
                 ) {
                     Icon(
                         imageVector = if (movie.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -107,21 +102,13 @@ fun CardMovie(
             Text(
                 text = movie.title,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleSmall, // Estilo apropiado
+                style = MaterialTheme.typography.titleSmall,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 6.dp)
                     .fillMaxWidth()
             )
-            // Opcional: Mostrar una pequeña parte de la descripción o fecha de lanzamiento
-            // Text(
-            //     text = movie.releaseDate ?: "",
-            //     textAlign = TextAlign.Center,
-            //     style = MaterialTheme.typography.bodySmall,
-            //     maxLines = 1,
-            //     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp).fillMaxWidth()
-            // )
         }
     }
 }

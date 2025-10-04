@@ -10,5 +10,4 @@ data class MovieDto(
     @SerializedName("release_date") val releaseDate: String?,
     @SerializedName("vote_average") val voteAverage: Double?,
     @SerializedName("popularity") val popularity: Double?
-    // Agrega otros campos que necesites de la API y que quieras mostrar o guardar
 )

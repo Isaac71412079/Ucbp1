@@ -18,8 +18,7 @@ class MovieRepository(
 ) : IMovieRepository {
 
     override fun getPopularMoviesStream(): Flow<List<MovieModel>> {
-        // Devuelve el stream directamente desde el LocalDataSource, que obtiene del DAO.
-        // El DAO ya ordena por 'isLiked'.
+
         return localDataSource.getAllMovies().map { entities ->
             entities.toDomainModelList()
         }
@@ -30,16 +29,14 @@ class MovieRepository(
             val remoteMoviePage = movieApiService.getPopularMovies(apiKey = apiKey)
             val remoteMoviesDto = remoteMoviePage.results
 
-            // Obtener los estados de "like" actuales de la base de datos
-            // para las películas que estamos a punto de insertar/actualizar.
-            val currentMoviesInDb = localDataSource.getAllMovies().first() // Obtiene la lista actual
+            val currentMoviesInDb = localDataSource.getAllMovies().first()
             val existingLikesMap = currentMoviesInDb.associate { it.id to it.isLiked }
 
             val movieEntities = remoteMoviesDto.toEntityList(existingLikesMap)
             localDataSource.insertOrUpdateMovies(movieEntities)
         } catch (e: Exception) {
             Log.e("MovieRepository", "Error refreshing popular movies: ${e.message}", e)
-            throw e // Re-lanzar para que el ViewModel/UseCase lo maneje
+            throw e
         }
     }
 

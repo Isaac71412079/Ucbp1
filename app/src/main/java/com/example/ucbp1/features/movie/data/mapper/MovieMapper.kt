@@ -4,7 +4,6 @@ import com.example.ucbp1.features.movie.data.api.dto.MovieDto
 import com.example.ucbp1.features.movie.data.database.entity.MovieEntity
 import com.example.ucbp1.features.movie.domain.model.MovieModel
 
-// Considera mover estas constantes a un archivo de configuración o BuildConfig
 const val TMDB_IMAGE_BASE_URL_W185 = "https://image.tmdb.org/t/p/w185"
 const val TMDB_IMAGE_BASE_URL_W500 = "https://image.tmdb.org/t/p/w500"
 
@@ -15,7 +14,7 @@ fun MovieDto.toEntity(isLikedInitially: Boolean = false): MovieEntity {
         overview = this.overview,
         posterPath = this.posterPath,
         releaseDate = this.releaseDate,
-        isLiked = isLikedInitially // Usualmente se inicia como false, se actualiza luego
+        isLiked = isLikedInitially
     )
 }
 

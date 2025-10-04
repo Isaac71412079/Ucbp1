@@ -1,5 +1,6 @@
 package com.example.ucbp1.features.dollar.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
@@ -10,8 +11,12 @@ import kotlinx.coroutines.launch
 import com.example.ucbp1.features.dollar.domain.model.Dollar
 import com.example.ucbp1.features.dollar.data.repository.DollarRepository
 import com.example.ucbp1.navigation.Screen
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class DollarViewModel(
     val getDollarUseCase: GetDollarUseCase
@@ -32,8 +37,28 @@ class DollarViewModel(
 
     fun getDollar() {
         viewModelScope.launch(Dispatchers.IO) {
+            getToken()
             getDollarUseCase.invoke().collect {
                     data -> _uiState.value = DollarUIState.Success(data) }
         }
     }
+
+    suspend fun getToken(): String = suspendCoroutine { continuation ->
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("FIREBASE", "getInstanceId failed", task.exception)
+                    continuation.resumeWithException(task.exception ?: Exception("Unknown error"))
+                    return@addOnCompleteListener
+                }
+                // Si la tarea fue exitosa, se obtiene el token
+                val token = task.result
+                Log.d("FIREBASE", "FCM Token: $token")
+
+
+                // Reanudar la ejecución con el token
+                continuation.resume(token ?: "")
+            }
+    }
+
 }

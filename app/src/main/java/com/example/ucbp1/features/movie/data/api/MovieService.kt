@@ -8,7 +8,7 @@ interface MovieService {
     @GET("movie/popular")
     suspend fun getPopularMovies(
         @Query("api_key") apiKey: String,
-        @Query("language") language: String = "es-ES", // Cambiado a español como ejemplo
+        @Query("language") language: String = "es-ES",
         @Query("page") page: Int = 1
     ): MoviePageDto
 }

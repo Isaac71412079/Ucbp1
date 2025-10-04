@@ -14,9 +14,9 @@ interface IMovieDao {
     suspend fun insertOrUpdateMovies(movies: List<MovieEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrUpdateMovie(movie: MovieEntity) // Útil para actualizaciones individuales
+    suspend fun insertOrUpdateMovie(movie: MovieEntity)
 
-    // Ordena por 'isLiked' descendente (los true primero) y luego por título
+
     @Query("SELECT * FROM movies_table ORDER BY isLiked DESC, title ASC")
     fun getAllMovies(): Flow<List<MovieEntity>>
 
@@ -27,5 +27,5 @@ interface IMovieDao {
     suspend fun updateLikeStatus(movieId: Int, isLiked: Boolean)
 
     @Query("DELETE FROM movies_table")
-    suspend fun deleteAllMovies() // Para limpiar la caché si es necesario
+    suspend fun deleteAllMovies()
 }
