@@ -9,7 +9,7 @@ import com.example.ucbp1.features.movie.data.database.entity.MovieEntity
 
 @Database(
     entities = [MovieEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppRoomDataBase : RoomDatabase() {

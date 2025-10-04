@@ -46,6 +46,7 @@ import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
 import com.example.ucbp1.features.dollar.presentation.DollarViewModel
 import com.example.ucbp1.features.movie.data.database.dao.IMovieDao
 import com.example.ucbp1.features.movie.domain.repository.IMovieRepository
+import com.example.ucbp1.features.movie.domain.usecase.RateMovieUseCase
 import com.example.ucbp1.features.movie.domain.usecase.ToggleMovieLikeUseCase
 object NetworkConstants {
     const val RETROFIT_GITHUB = "RetrofitGithub"
@@ -115,37 +116,31 @@ val appModule = module {
     single<MovieAppRoomDatabase> { MovieAppRoomDatabase.getDatabase(androidContext()) }
     single<IMovieDao> { get<MovieAppRoomDatabase>().movieDao() }
 
-    // 2. MovieService (ya lo tenías, pero asegúrate que usa el Retrofit correcto)
+    // 2. MovieService
     single<MovieService> {
         get<Retrofit>(named(NetworkConstants.RETROFIT_MOVIE)).create(MovieService::class.java)
     }
 
-    // 3. MovieLocalDataSource (NUEVO)
-    single { MovieLocalDataSource(movieDao = get()) } // IMovieDao se inyecta desde arriba
-
-    // 4. MovieRepository (Implementación) e IMovieRepository (Interfaz)
-    //    Tu MovieRepository original tomaba MovieRemoteDataSource.
-    //    La nueva versión toma MovieService y MovieLocalDataSource.
-    //    Voy a asumir que ya no usas MovieRemoteDataSource explícitamente para Movie.
-    //    Si SÍ lo usas, necesitarías definirlo también.
-    //    Aquí se elimina la línea de single { MovieRemoteDataSource(get(), get(named("apiKey"))) } si no se usa.
-    single<IMovieRepository> { // La interfaz
+    // 3. MovieLocalDataSource
+    single { MovieLocalDataSource(movieDao = get()) }
+    single<IMovieRepository> {
         MovieRepository(
-            movieApiService = get(), // MovieService
-            localDataSource = get(), // MovieLocalDataSource
-            apiKey = "fa3e844ce31744388e07fa47c7c5d8c3" // Obtener desde BuildConfig de tu app
+            movieApiService = get(),
+            localDataSource = get(),
+            apiKey = "fa3e844ce31744388e07fa47c7c5d8c3"
         )
     }
 
     // 5. UseCases para Movie
-    factory { FetchPopularMoviesUseCase(movieRepository = get()) } // Ya existía, asegúrate que inyecta IMovieRepository
-    factory { ToggleMovieLikeUseCase(movieRepository = get()) } // NUEVO
-
+    factory { FetchPopularMoviesUseCase(movieRepository = get()) }
+    factory { ToggleMovieLikeUseCase(movieRepository = get()) }
+    factory { RateMovieUseCase(movieRepository = get()) }
     // 6. ViewModel para Movie
     viewModel {
         PopularMoviesViewModel(
             fetchPopularMoviesUseCase = get(),
-            toggleMovieLikeUseCase = get()
+            toggleMovieLikeUseCase = get(),
+            rateMovieUseCase = get()
         )
     }
 }

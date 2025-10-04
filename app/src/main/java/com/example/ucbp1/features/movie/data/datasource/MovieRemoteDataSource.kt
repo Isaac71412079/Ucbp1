@@ -36,4 +36,8 @@ class MovieLocalDataSource(private val movieDao: IMovieDao) {
         return likedMoviesMap
         return emptyMap()
     }
+    
+    suspend fun updateRating(movieId: Int, rating: Int) {
+        movieDao.updateRating(movieId, rating)
+    }
 }

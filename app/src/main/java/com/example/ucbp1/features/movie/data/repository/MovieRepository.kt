@@ -49,4 +49,8 @@ class MovieRepository(
             Log.w("MovieRepository", "Movie with ID $movieId not found for toggling like.")
         }
     }
+
+    override suspend fun rateMovie(movieId: Int, rating: Int) {
+        localDataSource.updateRating(movieId, rating)
+    }
 }

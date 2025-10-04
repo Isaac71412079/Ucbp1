@@ -22,35 +22,36 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.example.ucbp1.features.movie.domain.model.MovieModel
-
-/**
- * Vista Composable que muestra una cuadrícula de películas populares.
- * Esta función es llamada por PopularMoviesScreen.
- */
+import com.example.ucbp1.features.movie.presentation.components.RatingBar
 @Composable
 fun PopularMoviesView(
     movies: List<MovieModel>,
     onLikeClicked: (movieId: Int) -> Unit,
-    onMovieCardClicked: (movie: MovieModel) -> Unit, // Para navegar a detalles, etc.
+    onRatingChanged: (movieId: Int, newRating: Int) -> Unit,
+    onMovieCardClicked: (movie: MovieModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (movies.isEmpty()) {
-        // Podrías mostrar un mensaje aquí si la lista está vacía después de cargar,
-        // pero el PopularMoviesScreen ya maneja el estado de "no hay películas".
-        // Esta vista se enfoca solo en renderizar la lista si existe.
+        Text(
+            text = "No se encontraron películas.",
+            modifier = Modifier.fillMaxSize(),
+            textAlign = TextAlign.Center
+        )
+        return
     }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(10.dp),   // Espaciado vertical
-        horizontalArrangement = Arrangement.spacedBy(10.dp), // Espaciado horizontal
-        contentPadding = PaddingValues(all = 10.dp),         // Padding alrededor de la cuadrícula
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        contentPadding = PaddingValues(all = 10.dp),
         modifier = modifier.fillMaxSize()
     ) {
-        items(movies, key = { it.id }) { movie -> // Usar la movie.id como key
+        items(movies, key = { it.id }) { movie ->
             CardMovie(
                 movie = movie,
                 onLikeClicked = { onLikeClicked(movie.id) },
+                onRatingChanged = { newRating -> onRatingChanged(movie.id, newRating) },
                 onCardClicked = { onMovieCardClicked(movie) }
             )
         }
@@ -61,6 +62,7 @@ fun PopularMoviesView(
 fun CardMovie(
     movie: MovieModel,
     onLikeClicked: () -> Unit,
+    onRatingChanged: (newRating: Int) -> Unit, // <-- AÑADIR PARÁMETRO
     onCardClicked: () -> Unit
 ) {
     OutlinedCard(
@@ -99,16 +101,25 @@ fun CardMovie(
                 }
             }
 
-            Text(
-                text = movie.title,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
+            Column(
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 6.dp)
-                    .fillMaxWidth()
-            )
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = movie.title,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp)) // Espacio entre título y estrellas
+                RatingBar(
+                    rating = movie.userRating,
+                    onRatingChanged = onRatingChanged
+                )
+            }
         }
     }
 }

@@ -10,5 +10,7 @@ data class MovieEntity(
     val overview: String,
     val posterPath: String?,
     val releaseDate: String?,
-    var isLiked: Boolean = false
+    var isLiked: Boolean = false,
+    // AÑADIDO: Campo para la calificación de 0 a 5.
+    val userRating: Int = 0 // 0 = sin calificar, 1-5 = estrellas
 )

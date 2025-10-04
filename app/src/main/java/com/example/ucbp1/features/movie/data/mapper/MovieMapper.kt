@@ -26,7 +26,8 @@ fun List<MovieDto>.toEntityList(existingLikesMap: Map<Int, Boolean> = emptyMap()
             overview = dto.overview,
             posterPath = dto.posterPath,
             releaseDate = dto.releaseDate,
-            isLiked = existingLikesMap[dto.id] ?: false
+            isLiked = existingLikesMap[dto.id] ?: false,
+            userRating = 0
         )
     }
 }
@@ -38,7 +39,8 @@ fun MovieEntity.toDomainModel(): MovieModel {
         overview = this.overview,
         posterUrl = if (this.posterPath != null) "$TMDB_IMAGE_BASE_URL_W500${this.posterPath}" else null,
         releaseDate = this.releaseDate,
-        isLiked = this.isLiked
+        isLiked = this.isLiked,
+        userRating = this.userRating
     )
 }
 

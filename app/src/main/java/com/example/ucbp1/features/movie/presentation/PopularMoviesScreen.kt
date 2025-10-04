@@ -22,13 +22,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PopularMoviesScreen(
-    viewModel: PopularMoviesViewModel // Inyectado por Koin, o usa koinViewModel()
+    viewModel: PopularMoviesViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Para mostrar errores en el Snackbar
     LaunchedEffect(uiState.error) {
         uiState.error?.let { errorMessage ->
             scope.launch {
@@ -37,7 +36,6 @@ fun PopularMoviesScreen(
                     duration = SnackbarDuration.Short
                 )
             }
-            // Considera limpiar el error en el ViewModel después de mostrarlo
         }
     }
 
@@ -81,18 +79,15 @@ fun PopularMoviesScreen(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
-                    // Si hay un error, el Box estará vacío y el Snackbar se mostrará.
                 }
 
                 uiState.movies.isNotEmpty() -> {
                     PopularMoviesView(
                         movies = uiState.movies,
-                        onLikeClicked = { movieId ->
-                            viewModel.onLikeClicked(movieId)
-                        },
+                        onLikeClicked = viewModel::onLikeClicked,
+                        //onLikeClicked = { movieId -> viewModel.onLikeClicked(movieId) },
+                        onRatingChanged = viewModel::onRatingChanged, // <-- AÑADIR ESTA LÍNEA
                         onMovieCardClicked = { movie ->
-                            // TODO: Implementar navegación a detalles de la película
-                            // Ejemplo: navController.navigate("movieDetail/${movie.id}")
                             println("Película clickeada: ${movie.title} (ID: ${movie.id})")
                         }
                     )

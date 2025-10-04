@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.ucbp1.features.movie.domain.model.MovieModel
 import com.example.ucbp1.features.movie.domain.usecase.FetchPopularMoviesUseCase
 import com.example.ucbp1.features.movie.domain.usecase.ToggleMovieLikeUseCase
+import com.example.ucbp1.features.movie.domain.usecase.RateMovieUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +23,8 @@ data class PopularMoviesUiState(
 
 class PopularMoviesViewModel(
     private val fetchPopularMoviesUseCase: FetchPopularMoviesUseCase,
-    private val toggleMovieLikeUseCase: ToggleMovieLikeUseCase
+    private val toggleMovieLikeUseCase: ToggleMovieLikeUseCase,
+    private val rateMovieUseCase: RateMovieUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PopularMoviesUiState())
@@ -35,7 +37,7 @@ class PopularMoviesViewModel(
 
     private fun observeMoviesFromLocalSource() {
         viewModelScope.launch {
-            fetchPopularMoviesUseCase() // Este es el Flow desde la BD
+            fetchPopularMoviesUseCase()
                 .onStart {
                     if (_uiState.value.movies.isEmpty()) {
                         _uiState.value = _uiState.value.copy(isLoading = true)
@@ -52,8 +54,7 @@ class PopularMoviesViewModel(
                 .collect { movies ->
                     _uiState.value = _uiState.value.copy(
                         movies = movies,
-                        isLoading = false, // Termina la carga general cuando llegan datos de la BD
-                        // isUserInitiatedRefresh se maneja en refreshMoviesFromServer
+                        isLoading = false,
                         error = if (movies.isNotEmpty()) null else _uiState.value.error
                     )
                 }
@@ -75,7 +76,7 @@ class PopularMoviesViewModel(
                 Log.e("ViewModel", "Error refreshing movies from server: ${e.message}", e)
                 _uiState.value = _uiState.value.copy(
                     error = "Fallo al actualizar películas: ${e.localizedMessage}",
-                    isLoading = false, // Asegurar que isLoading se quite si el refresco inicial falla
+                    isLoading = false,
                     isUserInitiatedRefresh = false
                 )
             } finally {
@@ -96,6 +97,19 @@ class PopularMoviesViewModel(
                 Log.e("ViewModel", "Error toggling like for movie ID $movieId: ${e.message}", e)
 
                 _uiState.value = _uiState.value.copy(error = "No se pudo actualizar el 'Me gusta'.")
+            }
+        }
+    }
+
+    //Nueva función para manejar el cambio de calificación
+    fun onRatingChanged(movieId: Int, newRating: Int) {
+        viewModelScope.launch {
+            try {
+                val validRating = newRating.coerceIn(0, 5)
+                rateMovieUseCase(movieId, validRating)
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error setting rating for movie ID $movieId: ${e.message}", e)
+                _uiState.value = _uiState.value.copy(error = "No se pudo guardar la calificación.")
             }
         }
     }

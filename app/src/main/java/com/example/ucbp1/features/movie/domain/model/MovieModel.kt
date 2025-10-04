@@ -6,5 +6,6 @@ data class MovieModel(
     val overview: String,
     val posterUrl: String?,
     val releaseDate: String?,
-    val isLiked: Boolean
+    val isLiked: Boolean,
+    val userRating: Int
 )

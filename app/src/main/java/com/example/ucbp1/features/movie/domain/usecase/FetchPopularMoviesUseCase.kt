@@ -11,7 +11,6 @@ class FetchPopularMoviesUseCase(
         return movieRepository.getPopularMoviesStream()
     }
 
-    // Método explícito para refrescar, si se quiere separar la acción
     suspend fun refresh() {
         movieRepository.refreshPopularMovies()
     }
