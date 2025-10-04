@@ -84,8 +84,7 @@ fun PopularMoviesScreen(
                 uiState.movies.isNotEmpty() -> {
                     PopularMoviesView(
                         movies = uiState.movies,
-                        onLikeClicked = viewModel::onLikeClicked,
-                        //onLikeClicked = { movieId -> viewModel.onLikeClicked(movieId) },
+                        onLikeClicked = { movieId -> viewModel.onLikeClicked(movieId) },
                         onRatingChanged = viewModel::onRatingChanged, // <-- AÑADIR ESTA LÍNEA
                         onMovieCardClicked = { movie ->
                             println("Película clickeada: ${movie.title} (ID: ${movie.id})")

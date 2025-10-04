@@ -21,7 +21,7 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Login.route
     ) {
         composable(Screen.Github.route) {
             GithubScreen(modifier = Modifier)

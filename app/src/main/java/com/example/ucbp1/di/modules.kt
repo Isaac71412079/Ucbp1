@@ -27,10 +27,10 @@ import com.example.ucbp1.features.profile.data.repository.ProfileRepository
 import com.example.ucbp1.features.profile.domain.repository.IProfileRepository
 import com.example.ucbp1.features.profile.domain.usecase.GetProfileUseCase
 
-import com.example.ucbp1.features.login.data.repository.LoginRepository
 import com.example.ucbp1.features.login.domain.repository.ILoginRepository
 import com.example.ucbp1.features.login.domain.usecase.LoginUseCase
 import com.example.ucbp1.features.login.presentation.LoginViewModel
+import com.example.ucbp1.features.login.data.LoginDataStore
 
 import okhttp3.OkHttpClient
 import org.koin.android.BuildConfig
@@ -44,6 +44,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
 import com.example.ucbp1.features.dollar.presentation.DollarViewModel
+import com.example.ucbp1.features.login.data.repository.LoginRepository
 import com.example.ucbp1.features.movie.data.database.dao.IMovieDao
 import com.example.ucbp1.features.movie.domain.repository.IMovieRepository
 import com.example.ucbp1.features.movie.domain.usecase.RateMovieUseCase
@@ -90,9 +91,10 @@ val appModule = module {
     }
 
     // login
-    single<ILoginRepository> { LoginRepository() }
+    single { LoginDataStore(androidContext()) }
+    single<ILoginRepository> { LoginRepository(get()) }
     factory { LoginUseCase(get()) }
-    viewModel { LoginViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
 
     single{ GithubRemoteDataSource(get()) }
     single<IGithubRepository>{ GithubRepository(get()) }

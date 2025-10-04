@@ -8,9 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.ucbp1.features.login.domain.model.LoginResult
 import com.example.ucbp1.features.login.domain.usecase.LoginUseCase
 import kotlinx.coroutines.launch
-
+import com.example.ucbp1.features.login.data.LoginDataStore
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val loginDataStore: LoginDataStore
 ) : ViewModel() {
 
     // Estado para los campos de texto
