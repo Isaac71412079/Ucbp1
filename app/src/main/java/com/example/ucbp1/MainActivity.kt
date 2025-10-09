@@ -37,24 +37,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.ucbp1.features.github.presentation.GithubScreen
 import com.example.ucbp1.navigation.AppNavigation
 import com.example.ucbp1.navigation.NavigationDrawer
 import com.example.ucbp1.navigation.NavigationViewModel
+import com.example.ucbp1.navigation.Screen
 import com.example.ucbp1.ui.theme.Ucbp1Theme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-
+import com.example.ucbp1.features.login.presentation.LoginScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Ucbp1Theme {
-                // Llama a MainApp con el ViewModel inyectado por Koin
-                MainApp(navigationViewModel = koinViewModel())
+                val rootNavController = rememberNavController()
+                NavHost(
+                    navController = rootNavController,
+                    startDestination = Screen.Login.route // La app siempre empieza en Login
+                ) {
+                    // Destino 1: La pantalla de Login
+                    composable(Screen.Login.route) {
+                        LoginScreen(
+                            onLoginSuccess = {
+                                // Al tener éxito, navega a todo el flujo principal
+                                rootNavController.navigate("main_flow") {
+                                    // Limpia el stack para que el usuario no pueda volver al Login
+                                    popUpTo(Screen.Login.route) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+
+                    // Destino 2: Todo el flujo de la app principal con el Drawer
+                    composable("main_flow") {
+                        // Llamamos a MainApp, que ahora contendrá el Drawer y el NavHost interno
+                        MainApp(navigationViewModel = koinViewModel())
+                    }
+                }
             }
         }
     }

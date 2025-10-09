@@ -19,28 +19,24 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AppNavigation(
     navigationViewModel: NavigationViewModel,
-    modifier: Modifier, // Recibe el modifier con el padding del Scaffold
+    modifier: Modifier,
     navController: NavHostController
 ) {
     val navController: NavHostController = rememberNavController()
 
-    // Manejar navegación desde el ViewModel
     LaunchedEffect(Unit) {
         navigationViewModel.navigationCommand.collect { command ->
             when (command) {
                 is NavigationViewModel.NavigationCommand.NavigateTo -> {
                     navController.navigate(command.route) {
-                        // Configuración del back stack según sea necesario
                         when (command.options) {
                             NavigationViewModel.NavigationOptions.CLEAR_BACK_STACK -> {
                                 popUpTo(0) // Limpiar todo el back stack
                             }
                             NavigationViewModel.NavigationOptions.REPLACE_HOME -> {
-                                // Ejemplo: si navegas desde un detalle, vuelve a la lista
                                 popUpTo(navController.graph.startDestinationId) { inclusive = false }
                             }
                             else -> {
-                                // Navegación normal
                             }
                         }
                     }
@@ -54,7 +50,7 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = Screen.PopularMovies.route,
+        startDestination = Screen.Home.route,
         modifier = modifier // Aplica el modifier aquí
     ) {
         composable(Screen.Github.route) {
@@ -74,7 +70,7 @@ fun AppNavigation(
             PopularMoviesScreen(viewModel = popularMoviesViewModel)
 
         }
-
+        /*
         composable(Screen.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
@@ -84,7 +80,7 @@ fun AppNavigation(
                 }
             )
         }
-
+        */
         composable(Screen.Home.route) {
             HomeScreen(navController = navController)
         }
