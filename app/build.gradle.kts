@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.messaging)
     implementation(libs.androidx.room.common.jvm)
+    implementation(libs.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,6 +72,8 @@ dependencies {
     implementation(libs.coil.network)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.datastore)
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended-android:1.6.8")
     //local bundle room
     implementation(libs.bundles.local)
     annotationProcessor(libs.room.compiler)

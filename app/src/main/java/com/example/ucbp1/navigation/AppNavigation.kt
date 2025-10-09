@@ -1,6 +1,7 @@
 package com.example.ucbp1.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,12 +17,45 @@ import com.example.ucbp1.features.movie.presentation.PopularMoviesViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    navigationViewModel: NavigationViewModel,
+    modifier: Modifier, // Recibe el modifier con el padding del Scaffold
+    navController: NavHostController
+) {
     val navController: NavHostController = rememberNavController()
+
+    // Manejar navegación desde el ViewModel
+    LaunchedEffect(Unit) {
+        navigationViewModel.navigationCommand.collect { command ->
+            when (command) {
+                is NavigationViewModel.NavigationCommand.NavigateTo -> {
+                    navController.navigate(command.route) {
+                        // Configuración del back stack según sea necesario
+                        when (command.options) {
+                            NavigationViewModel.NavigationOptions.CLEAR_BACK_STACK -> {
+                                popUpTo(0) // Limpiar todo el back stack
+                            }
+                            NavigationViewModel.NavigationOptions.REPLACE_HOME -> {
+                                // Ejemplo: si navegas desde un detalle, vuelve a la lista
+                                popUpTo(navController.graph.startDestinationId) { inclusive = false }
+                            }
+                            else -> {
+                                // Navegación normal
+                            }
+                        }
+                    }
+                }
+                is NavigationViewModel.NavigationCommand.PopBackStack -> {
+                    navController.popBackStack()
+                }
+            }
+        }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = Screen.PopularMovies.route,
+        modifier = modifier // Aplica el modifier aquí
     ) {
         composable(Screen.Github.route) {
             GithubScreen(modifier = Modifier)

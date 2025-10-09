@@ -32,6 +32,7 @@ import com.example.ucbp1.features.login.domain.usecase.LoginUseCase
 import com.example.ucbp1.features.login.presentation.LoginViewModel
 import com.example.ucbp1.features.login.data.LoginDataStore
 
+import com.example.ucbp1.navigation.NavigationViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidApplication
@@ -145,4 +146,7 @@ val appModule = module {
             rateMovieUseCase = get()
         )
     }
+
+    // AÑADIDO: ViewModel para la navegación global
+    viewModel { NavigationViewModel() }
 }
