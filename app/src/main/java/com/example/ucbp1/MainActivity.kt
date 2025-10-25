@@ -50,6 +50,7 @@ import com.example.ucbp1.ui.theme.Ucbp1Theme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import com.example.ucbp1.features.splash.SplashScreen
 import com.example.ucbp1.features.login.presentation.LoginScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +60,11 @@ class MainActivity : ComponentActivity() {
                 val rootNavController = rememberNavController()
                 NavHost(
                     navController = rootNavController,
-                    startDestination = Screen.Login.route // La app siempre empieza en Login
+                    startDestination = "splash_route"// La app siempre empieza en Login
                 ) {
+                    composable("splash_route") {
+                        SplashScreen(navController = rootNavController)
+                    }
                     // Destino 1: La pantalla de Login
                     composable(Screen.Login.route) {
                         LoginScreen(
