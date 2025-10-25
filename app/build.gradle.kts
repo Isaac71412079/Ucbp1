@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -74,6 +75,7 @@ dependencies {
     implementation(libs.datastore)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended-android:1.6.8")
+    implementation(libs.kotlinx.serialization.json)
     //local bundle room
     implementation(libs.bundles.local)
     annotationProcessor(libs.room.compiler)

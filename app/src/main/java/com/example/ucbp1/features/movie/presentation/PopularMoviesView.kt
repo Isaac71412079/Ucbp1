@@ -62,14 +62,13 @@ fun PopularMoviesView(
 fun CardMovie(
     movie: MovieModel,
     onLikeClicked: () -> Unit,
-    onRatingChanged: (newRating: Int) -> Unit, // <-- AÑADIR PARÁMETRO
+    onRatingChanged: (newRating: Int) -> Unit,
     onCardClicked: () -> Unit
 ) {
     OutlinedCard(
         modifier = Modifier
-
-            .fillMaxSize()
-            .clickable { onCardClicked() },
+            .fillMaxSize(),
+           //.clickable { onCardClicked() },
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -119,6 +118,9 @@ fun CardMovie(
                     rating = movie.userRating,
                     onRatingChanged = onRatingChanged
                 )
+                Button(onClick = onCardClicked) {
+                    Text("Ver detalle")
+                }
             }
         }
     }

@@ -17,14 +17,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.ucbp1.features.movie.domain.model.MovieModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PopularMoviesScreen(
-    viewModel: PopularMoviesViewModel
+    popularMoviesViewModel: PopularMoviesViewModel = koinViewModel(),
+    navigateToDetail: (movie: MovieModel) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by popularMoviesViewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -51,7 +54,7 @@ fun PopularMoviesScreen(
                             strokeWidth = 2.dp
                         )
                     } else {
-                        IconButton(onClick = { viewModel.refreshMoviesFromServer() }) {
+                        IconButton(onClick = { popularMoviesViewModel.refreshMoviesFromServer() }) {
                             Icon(
                                 imageVector = Icons.Filled.Refresh,
                                 contentDescription = "Refrescar películas"
@@ -72,7 +75,6 @@ fun PopularMoviesScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
                 uiState.movies.isEmpty() && !uiState.isLoading && !uiState.isUserInitiatedRefresh -> {
-
                     if (uiState.error == null) {
                         Text(
                             "No se encontraron películas.",
@@ -84,10 +86,10 @@ fun PopularMoviesScreen(
                 uiState.movies.isNotEmpty() -> {
                     PopularMoviesView(
                         movies = uiState.movies,
-                        onLikeClicked = { movieId -> viewModel.onLikeClicked(movieId) },
-                        onRatingChanged = viewModel::onRatingChanged, // <-- AÑADIR ESTA LÍNEA
+                        onLikeClicked = { movieId -> popularMoviesViewModel.onLikeClicked(movieId) },
+                        onRatingChanged = popularMoviesViewModel::onRatingChanged,
                         onMovieCardClicked = { movie ->
-                            println("Película clickeada: ${movie.title} (ID: ${movie.id})")
+                            navigateToDetail(movie)
                         }
                     )
                 }

@@ -4,18 +4,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.ucbp1.features.github.presentation.GithubScreen
 import com.example.ucbp1.features.profile.application.ProfileScreen
 import com.example.ucbp1.features.dollar.presentation.DollarScreen
 import com.example.ucbp1.features.movie.presentation.PopularMoviesScreen
 import com.example.ucbp1.features.login.presentation.LoginScreen
 import com.example.ucbp1.features.home.presentation.HomeScreen
+import com.example.ucbp1.features.movie.domain.model.MovieModel
 import com.example.ucbp1.features.movie.presentation.PopularMoviesViewModel
+import com.example.ucbp1.features.movie.presentation.detail.MovieDetailScreen
 import org.koin.androidx.compose.koinViewModel
-
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
+import java.net.URLEncoder
+import java.net.URLDecoder
 @Composable
 fun AppNavigation(
     navigationViewModel: NavigationViewModel,
@@ -66,21 +74,29 @@ fun AppNavigation(
         }
 
         composable(Screen.PopularMovies.route) {
-            val popularMoviesViewModel: PopularMoviesViewModel = koinViewModel()
-            PopularMoviesScreen(viewModel = popularMoviesViewModel)
-
-        }
-        /*
-        composable(Screen.Login.route) {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
+            PopularMoviesScreen(
+                navigateToDetail = { movie ->
+                    val movieJson = Json.encodeToString(movie)
+                    val encodedMovieJson = URLEncoder.encode(movieJson, "UTF-8")
+                    navController.navigate("${Screen.MovieDetail.route}/$encodedMovieJson")
                 }
             )
         }
-        */
+
+        composable(
+            route = "${Screen.MovieDetail.route}/{movie}",
+            arguments = listOf(navArgument("movie") { type = NavType.StringType })
+        ) { navBackStackEntry ->
+            val movieJson = navBackStackEntry.arguments?.getString("movie") ?: ""
+            val decodedMovieJson = URLDecoder.decode(movieJson, "UTF-8")
+            val movie = Json.decodeFromString<MovieModel>(decodedMovieJson)
+
+            MovieDetailScreen(
+                movie = movie,
+                back = { navController.popBackStack() }
+            )
+        }
+
         composable(Screen.Home.route) {
             HomeScreen(navController = navController)
         }
