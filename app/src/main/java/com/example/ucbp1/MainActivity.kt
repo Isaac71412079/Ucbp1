@@ -158,6 +158,7 @@ class MainActivity : ComponentActivity() {
         } else {
             ModalNavigationDrawer(
                 drawerState = drawerState,
+                gesturesEnabled = false,
                 drawerContent = {
                     ModalDrawerSheet(
                         modifier = Modifier.width(256.dp)
@@ -166,20 +167,6 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxWidth(), // Usar fillMaxWidth para centrar correctamente
                             contentAlignment = Alignment.Center
                         ) {
-                            // Nota: Asegúrate de tener estas imágenes en tu carpeta res/drawable
-                            // Si no las tienes, puedes comentar estas líneas por ahora
-                            /*
-                        Image(
-                            modifier = Modifier.width(120.dp),
-                            painter = painterResource(id = R.drawable.ic_launcher_background),
-                            contentDescription = "Logo Background",
-                        )
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                            contentDescription = "Logo Foreground",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        */
                         }
                         Spacer(Modifier.height(16.dp)) // Espacio entre el logo y los items
                         navigationDrawerItems.forEach { item ->

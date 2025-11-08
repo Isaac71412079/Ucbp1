@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -67,7 +68,10 @@ fun AtuladoScreen(url: String,
                                 navigateBack = true
                             }
                         ) {
-                            Text("Back")
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Atrás" // Descripción para accesibilidad
+                            )
                         }
                     }
                 }
@@ -77,7 +81,9 @@ fun AtuladoScreen(url: String,
         content = { paddingValues ->
 
             AndroidView(
-                modifier = modifier.fillMaxSize().padding(paddingValues),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 factory = { it ->
                     WebView(it).apply {
                         layoutParams = ViewGroup.LayoutParams(
