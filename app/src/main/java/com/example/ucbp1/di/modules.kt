@@ -113,8 +113,7 @@ val appModule = module {
     single { DollarLocalDataSource(get()) }
     single<IDollarRepository> { DollarRepository(get(), get()) }
     factory { GetDollarUseCase(get()) }
-    viewModel { DollarViewModel(get()) }
-
+    viewModel { DollarViewModel(get(), get()) }
     // 1. Database específica para Movie
     single<MovieAppRoomDatabase> { MovieAppRoomDatabase.getDatabase(androidContext()) }
     single<IMovieDao> { get<MovieAppRoomDatabase>().movieDao() }
