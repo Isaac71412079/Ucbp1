@@ -20,10 +20,4 @@ data class Dollar(
     @get:com.google.firebase.database.PropertyName("timestamp")
     @set:com.google.firebase.database.PropertyName("timestamp")
     var lastUpdated: Long? = null,
-
-    // --- INICIO: CAMPOS AÑADIDOS PARA LA VARIACIÓN ---
-    // Se calculan localmente, no afectan a Firebase ni a la BD local.
-    var officialSellVariation: Double? = null,
-    var parallelSellVariation: Double? = null
-    // --- FIN: CAMPOS AÑADIDOS ---
 )

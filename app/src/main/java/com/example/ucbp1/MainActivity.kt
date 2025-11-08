@@ -134,6 +134,10 @@ class MainActivity : ComponentActivity() {
         val navController: NavHostController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
+        //val isMovieDetail = currentDestination?.route?.startsWith(Screen.MovieDetail.route) == true
+        val notShowTopBar =
+            (currentDestination?.route?.startsWith(Screen.MovieDetail.route) == true) ||
+                    (currentDestination?.route?.startsWith(Screen.Atulado.route) == true)
 
         val navigationDrawerItems = listOf(
             NavigationDrawer.Profile,
@@ -143,20 +147,26 @@ class MainActivity : ComponentActivity() {
         )
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val coroutineScope = rememberCoroutineScope()
-
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
-                ModalDrawerSheet(
-                    modifier = Modifier.width(256.dp)
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(), // Usar fillMaxWidth para centrar correctamente
-                        contentAlignment = Alignment.Center
+        if (notShowTopBar) {
+            AppNavigation(
+                navController = navController,
+                navigationViewModel = navigationViewModel,
+                modifier = Modifier
+            )
+        } else {
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    ModalDrawerSheet(
+                        modifier = Modifier.width(256.dp)
                     ) {
-                        // Nota: Asegúrate de tener estas imágenes en tu carpeta res/drawable
-                        // Si no las tienes, puedes comentar estas líneas por ahora
-                        /*
+                        Box(
+                            modifier = Modifier.fillMaxWidth(), // Usar fillMaxWidth para centrar correctamente
+                            contentAlignment = Alignment.Center
+                        ) {
+                            // Nota: Asegúrate de tener estas imágenes en tu carpeta res/drawable
+                            // Si no las tienes, puedes comentar estas líneas por ahora
+                            /*
                         Image(
                             modifier = Modifier.width(120.dp),
                             painter = painterResource(id = R.drawable.ic_launcher_background),
@@ -168,42 +178,48 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(16.dp)
                         )
                         */
-                    }
-                    Spacer(Modifier.height(16.dp)) // Espacio entre el logo y los items
-                    navigationDrawerItems.forEach { item ->
-                        val isSelected = currentDestination?.route == item.route
-                        NavigationDrawerItem(
-                            icon = {
-                                Icon(
-                                    imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                                    contentDescription = item.label
-                                )
-                            },
-                            label = { Text(item.label) },
-                            selected = isSelected,
-                            onClick = {
-                                // En lugar de usar navController directamente, usamos el ViewModel
-                                // para mantener la lógica centralizada, aunque la opción directa
-                                // también funciona como en las instrucciones.
-                                // Opción 1 (Directa): navController.navigate(...)
-                                // Opción 2 (Con ViewModel):
-                                navigationViewModel.navigateTo(
-                                    item.route,
-                                    NavigationViewModel.NavigationOptions.REPLACE_HOME
-                                )
+                        }
+                        Spacer(Modifier.height(16.dp)) // Espacio entre el logo y los items
+                        navigationDrawerItems.forEach { item ->
+                            val isSelected = currentDestination?.route == item.route
+                            NavigationDrawerItem(
+                                icon = {
+                                    Icon(
+                                        imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                                        contentDescription = item.label
+                                    )
+                                },
+                                label = { Text(item.label) },
+                                selected = isSelected,
+                                onClick = {
+                                    // En lugar de usar navController directamente, usamos el ViewModel
+                                    // para mantener la lógica centralizada, aunque la opción directa
+                                    // también funciona como en las instrucciones.
+                                    // Opción 1 (Directa): navController.navigate(...)
+                                    // Opción 2 (Con ViewModel):
+                                    navigationViewModel.navigateTo(
+                                        item.route,
+                                        NavigationViewModel.NavigationOptions.REPLACE_HOME
+                                    )
 
-                                coroutineScope.launch {
-                                    drawerState.close()
+                                    coroutineScope.launch {
+                                        drawerState.close()
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
-            }
-        ) {
-            // Contenido principal de la app
-            NavigationDrawerHost(coroutineScope, drawerState, navigationViewModel, navController)
+            ) {
+                // Contenido principal de la app
+                NavigationDrawerHost(
+                    coroutineScope,
+                    drawerState,
+                    navigationViewModel,
+                    navController
+                )
 
+            }
         }
     }
 }

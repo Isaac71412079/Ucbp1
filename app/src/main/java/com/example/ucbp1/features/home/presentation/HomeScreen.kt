@@ -42,6 +42,7 @@ fun HomeScreen(navController: NavController) {
             item { MenuButton("Dólar") { navController.navigate(Screen.Dollar.route) } }
             item { MenuButton("Películas") { navController.navigate(Screen.PopularMovies.route) } }
             item { MenuButton("Perfil") { navController.navigate(Screen.Profile.route) } }
+            item { MenuButton("Atulado BISA") { navController.navigate(Screen.Atulado.route) } }
         }
     }
 }

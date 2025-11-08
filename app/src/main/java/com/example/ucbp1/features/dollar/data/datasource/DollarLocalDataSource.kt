@@ -1,19 +1,13 @@
 package com.example.ucbp1.features.dollar.data.datasource
 
 import com.example.ucbp1.features.dollar.data.database.dao.IDollarDao
-import com.example.ucbp1.features.dollar.data.database.entity.DollarEntity
 import com.example.ucbp1.features.dollar.data.mapper.toEntity
 import com.example.ucbp1.features.dollar.data.mapper.toModel
 import com.example.ucbp1.features.dollar.domain.model.Dollar
-import kotlinx.coroutines.flow.Flow
 
 class DollarLocalDataSource(
     val dao: IDollarDao
 ) {
-    fun getLatestTwo(): Flow<List<DollarEntity>> {
-        return dao.getLatestTwoRates()
-    }
-
     suspend fun getList(): List<Dollar> {
         return dao.getList().map {
             it.toModel()

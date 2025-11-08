@@ -18,6 +18,7 @@ import com.example.ucbp1.features.home.presentation.HomeScreen
 import com.example.ucbp1.features.movie.domain.model.MovieModel
 import com.example.ucbp1.features.movie.presentation.PopularMoviesViewModel
 import com.example.ucbp1.features.movie.presentation.detail.MovieDetailScreen
+import com.example.ucbp1.features.webview.presentation.AtuladoScreen
 import org.koin.androidx.compose.koinViewModel
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
@@ -59,7 +60,7 @@ fun AppNavigation(
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
-        modifier = modifier // Aplica el modifier aquí
+        modifier = modifier
     ) {
         composable(Screen.Github.route) {
             GithubScreen(modifier = Modifier)
@@ -99,6 +100,17 @@ fun AppNavigation(
 
         composable(Screen.Home.route) {
             HomeScreen(navController = navController)
+        }
+
+        composable(
+            Screen.Atulado.route
+        ) {
+            AtuladoScreen(
+                "https://www.bisa.com/atulado",
+                postData = null,
+                modifier = modifier,
+                shouldStopBrowsing = { true }
+            )
         }
     }
 }

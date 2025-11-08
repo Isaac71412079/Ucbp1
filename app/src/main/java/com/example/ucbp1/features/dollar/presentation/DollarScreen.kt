@@ -1,21 +1,30 @@
 package com.example.ucbp1.features.dollar.presentation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
-
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.layout.fillMaxWidth
 @Composable
 fun DollarScreen(
     viewModelDollar: DollarViewModel = koinViewModel()
@@ -38,57 +47,42 @@ fun DollarScreen(
             is DollarViewModel.DollarUIState.Success -> {
                 val dollar = stateValue.data
 
-                if (dollar == null) {
-                    Text("Obteniendo datos del dólar...")
-                } else {
-                    // --- Card Principal (se muestra siempre) ---
-                    DollarCard(
-                        title = "Dólar Oficial",
-                        buy = dollar.officialBuy,
-                        sell = dollar.officialSell
+                DollarCard(
+                    title = "Dólar Oficial",
+                    buy = dollar.officialBuy,
+                    sell = dollar.officialSell
+                )
+
+                DollarCard(
+                    title = "Dólar Paralelo",
+                    buy = dollar.parallelBuy,
+                    sell = dollar.parallelSell
+                )
+
+                dollar.lastUpdated?.let { timestamp ->
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Última actualización: ${formatDate(timestamp)}",
+                        style = MaterialTheme.typography.bodySmall
                     )
-
-                    DollarCard(
-                        title = "Dólar Paralelo",
-                        buy = dollar.parallelBuy,
-                        sell = dollar.parallelSell
-                    )
-
-                    // --- NUEVO: Card de Variación (se muestra solo si hay datos) ---
-                    if (dollar.officialSellVariation != null || dollar.parallelSellVariation != null) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text("Variación", style = MaterialTheme.typography.titleMedium)
-                        VariationCard(title = "Oficial", variation = dollar.officialSellVariation)
-                        VariationCard(title = "Paralelo", variation = dollar.parallelSellVariation)
-                    }
-
-                    dollar.lastUpdated?.let { timestamp ->
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Última actualización: ${formatDate(timestamp)}",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
                 }
             }
         }
     }
 }
 
-// --- INICIO: CÓDIGO RESTAURADO Y CORREGIDO ---
-// Este es el Composable que faltaba. Lo he restaurado desde tu código original.
 @Composable
 fun DollarCard(title: String, buy: String?, sell: String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp), // Padding vertical reducido
+            .padding(vertical = 8.dp), // Padding vertical reducido
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp), // Padding unificado
+                .padding(30.dp), // Padding unificado
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Título centrado
@@ -98,14 +92,12 @@ fun DollarCard(title: String, buy: String?, sell: String?) {
                 modifier = Modifier.padding(bottom = 12.dp),
                 fontWeight = FontWeight.Bold
             )
-
-            // Row para alinear Compra y Venta
-            Row(
+            androidx.compose.foundation.layout.Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround, // SpaceAround para mejor distribución
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(horizontalAlignment = Alignment.Start) {
                     Text(
                         text = "Compra",
                         style = MaterialTheme.typography.labelMedium,
@@ -116,7 +108,7 @@ fun DollarCard(title: String, buy: String?, sell: String?) {
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(horizontalAlignment = Alignment.End) {
                     Text(
                         text = "Venta",
                         style = MaterialTheme.typography.labelMedium,
@@ -127,50 +119,6 @@ fun DollarCard(title: String, buy: String?, sell: String?) {
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-            }
-        }
-    }
-}
-// --- FIN: CÓDIGO RESTAURADO Y CORREGIDO ---
-
-
-// --- NUEVO COMPOSABLE PARA EL CARD DE VARIACIÓN ---
-@Composable
-fun VariationCard(title: String, variation: Double?) {
-    if (variation == null) return
-
-    val (icon, color, text) = when {
-        variation > 0.00001 -> Triple(Icons.Default.ArrowUpward, Color(0xFFD32F2F), "Subió")
-        variation < -0.00001 -> Triple(Icons.Default.ArrowDownward, Color(0xFF388E3C), "Bajó")
-        else -> Triple(Icons.Default.DragHandle, Color.Gray, "Estable")
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(text, style = MaterialTheme.typography.bodyLarge, color = color)
-                Icon(imageVector = icon, contentDescription = text, tint = color)
-                Text(
-                    text = "%+.4f".format(variation),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = color
-                )
             }
         }
     }

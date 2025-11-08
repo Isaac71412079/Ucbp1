@@ -7,8 +7,7 @@ import kotlinx.coroutines.flow.Flow
 class GetDollarUseCase(
     val dollarRepository: IDollarRepository
 ) {
-    // Ahora devuelve un Flow que puede ser nulo
-    fun invoke(): Flow<Dollar?> {
-        return dollarRepository.getDollarFromLocal()
+    suspend fun invoke(): Flow<Dollar> {
+        return dollarRepository.getDollarUpdates()
     }
 }

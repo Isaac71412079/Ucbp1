@@ -40,4 +40,11 @@ sealed class NavigationDrawer(
         Icons.Outlined.PlayArrow,
         Screen.PopularMovies.route
     )
+
+    data object Atulado : NavigationDrawer(
+        "BISA",
+        Icons.Filled.MonetizationOn, // Icono más apropiado
+        Icons.Outlined.MonetizationOn,
+        Screen.Atulado.route
+    )
 }
