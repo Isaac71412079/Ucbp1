@@ -1,3 +1,4 @@
+import com.google.protobuf.gradle.id
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +6,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.google.protobuf)
 }
 
 android {
@@ -81,4 +83,40 @@ dependencies {
     annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
     testImplementation(libs.room.testing)
+    implementation(libs.androidx.work.runtime.ktx)
+
+    //proto
+    implementation(libs.grpc.protobuf.lite)
+    implementation(libs.protobuf.kotlin.lite)
+    implementation(libs.grpc.kotlin.stub)
+    runtimeOnly(libs.grpc.okhttp)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${libs.versions.protobuf.get()}"
+    }
+    plugins {
+        id("java") {
+            artifact = libs.protoc.gen.grpc.java.get().toString()
+        }
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:${libs.versions.grpc.get()}"
+        }
+        id("grpckt") {
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:${libs.versions.grpcKotlin.get()}:jdk8@jar"
+        }
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                create("java") { option("lite") }
+                create("grpc") { option("lite") }
+                create("grpckt") { option("lite") }
+            }
+            it.builtins {
+                create("kotlin") { option("lite") }
+            }
+        }
+    }
 }

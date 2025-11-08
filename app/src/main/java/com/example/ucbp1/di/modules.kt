@@ -46,6 +46,7 @@ import java.util.concurrent.TimeUnit
 import com.example.ucbp1.features.dollar.domain.usecase.GetDollarUseCase
 import com.example.ucbp1.features.dollar.presentation.DollarViewModel
 import com.example.ucbp1.features.login.data.repository.LoginRepository
+import com.example.ucbp1.features.logs.data.datasource.LogsRemoteDataSource
 import com.example.ucbp1.features.movie.data.database.dao.IMovieDao
 import com.example.ucbp1.features.movie.domain.repository.IMovieRepository
 import com.example.ucbp1.features.movie.domain.usecase.RateMovieUseCase
@@ -148,4 +149,10 @@ val appModule = module {
 
     // AÑADIDO: ViewModel para la navegación global
     viewModel { NavigationViewModel() }
+    single {
+        LogsRemoteDataSource(
+            host = "10.0.2.2",
+            port = 9090,
+        )
+    }
 }
