@@ -1,41 +1,36 @@
 package com.example.ucbp1.di
 
 import com.example.ucbp1.R
-//import com.example.ucbp1.BuildConfig // <--- AÑADIR ESTE IMPORT
 import com.example.ucbp1.features.dollar.data.database.AppRoomDatabase
 import com.example.ucbp1.features.dollar.data.datasource.DollarLocalDataSource
 import com.example.ucbp1.features.dollar.data.repository.DollarRepository
 import com.example.ucbp1.features.dollar.data.datasource.RealTimeRemoteDataSource
 import com.example.ucbp1.features.dollar.domain.repository.IDollarRepository
-
 import com.example.ucbp1.features.github.data.api.GithubService
 import com.example.ucbp1.features.github.data.datasource.GithubRemoteDataSource
 import com.example.ucbp1.features.github.data.repository.GithubRepository
 import com.example.ucbp1.features.github.domain.repository.IGithubRepository
 import com.example.ucbp1.features.github.domain.usecase.FindByNicknameUseCase
 import com.example.ucbp1.features.github.presentation.GithubViewModel
-
 import com.example.ucbp1.features.movie.data.api.MovieService
 import com.example.ucbp1.features.movie.data.datasource.MovieLocalDataSource
 import com.example.ucbp1.features.movie.data.repository.MovieRepository
 import com.example.ucbp1.features.movie.domain.usecase.FetchPopularMoviesUseCase
 import com.example.ucbp1.features.movie.presentation.PopularMoviesViewModel
 import com.example.ucbp1.features.movie.data.database.AppRoomDataBase as MovieAppRoomDatabase
-
 import com.example.ucbp1.features.profile.application.ProfileViewModel
 import com.example.ucbp1.features.profile.data.repository.ProfileRepository
 import com.example.ucbp1.features.profile.domain.repository.IProfileRepository
 import com.example.ucbp1.features.profile.domain.usecase.GetProfileUseCase
-
 import com.example.ucbp1.features.login.domain.repository.ILoginRepository
 import com.example.ucbp1.features.login.domain.usecase.LoginUseCase
 import com.example.ucbp1.features.login.presentation.LoginViewModel
 import com.example.ucbp1.features.login.data.LoginDataStore
-
 import com.example.ucbp1.navigation.NavigationViewModel
+// --- IMPORTS AÑADIDOS PARA GRPC ---
+import io.grpc.ManagedChannel
+import io.grpc.ManagedChannelBuilder
 import okhttp3.OkHttpClient
-import org.koin.android.BuildConfig
-import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -51,14 +46,33 @@ import com.example.ucbp1.features.movie.data.database.dao.IMovieDao
 import com.example.ucbp1.features.movie.domain.repository.IMovieRepository
 import com.example.ucbp1.features.movie.domain.usecase.RateMovieUseCase
 import com.example.ucbp1.features.movie.domain.usecase.ToggleMovieLikeUseCase
+
 object NetworkConstants {
     const val RETROFIT_GITHUB = "RetrofitGithub"
     const val GITHUB_BASE_URL = "https://api.github.com/"
     const val RETROFIT_MOVIE = "RetrofitMovie"
     const val MOVIE_BASE_URL = "https://api.themoviedb.org/3/"
+    // AÑADIDO: Constantes para gRPC
+    const val GRPC_HOST = "10.0.2.2"
+    const val GRPC_PORT = 9090
 }
 
 val appModule = module {
+
+    // --- BLOQUE AÑADIDO PARA GRPC ---
+    // 1. Define cómo crear el canal de comunicación gRPC
+    single<ManagedChannel> {
+        ManagedChannelBuilder.forAddress(NetworkConstants.GRPC_HOST, NetworkConstants.GRPC_PORT)
+            .usePlaintext() // Necesario para conexiones sin encriptar en desarrollo
+            .build()
+    }
+
+    // 2. Define cómo crear tu LogsRemoteDataSource, usando el canal anterior
+    single {
+        LogsRemoteDataSource(channel = get()) // Koin le pasará el ManagedChannel
+    }
+    // --- FIN DEL BLOQUE AÑADIDO ---
+
 
     // OkHttpClient
     single {
@@ -114,7 +128,11 @@ val appModule = module {
     single { DollarLocalDataSource(get()) }
     single<IDollarRepository> { DollarRepository(get(), get()) }
     factory { GetDollarUseCase(get()) }
-    viewModel { DollarViewModel(get()) }
+
+    // --- LÍNEA YA CORRECTA, SOLO CONFIRMAR ---
+    // DollarViewModel necesita IDollarRepository (el primer get()) y LogsRemoteDataSource (el segundo get())
+    viewModel { DollarViewModel(get(), get()) }
+
     // 1. Database específica para Movie
     single<MovieAppRoomDatabase> { MovieAppRoomDatabase.getDatabase(androidContext()) }
     single<IMovieDao> { get<MovieAppRoomDatabase>().movieDao() }
@@ -138,6 +156,7 @@ val appModule = module {
     factory { FetchPopularMoviesUseCase(movieRepository = get()) }
     factory { ToggleMovieLikeUseCase(movieRepository = get()) }
     factory { RateMovieUseCase(movieRepository = get()) }
+
     // 6. ViewModel para Movie
     viewModel {
         PopularMoviesViewModel(
@@ -146,13 +165,5 @@ val appModule = module {
             rateMovieUseCase = get()
         )
     }
-
-    // AÑADIDO: ViewModel para la navegación global
     viewModel { NavigationViewModel() }
-    single {
-        LogsRemoteDataSource(
-            host = "10.0.2.2",
-            port = 9090,
-        )
-    }
 }

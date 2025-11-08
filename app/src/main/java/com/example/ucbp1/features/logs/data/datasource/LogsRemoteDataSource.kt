@@ -3,32 +3,23 @@ package com.example.ucbp1.features.logs.data.datasource
 import com.develoop.logs.LogApi
 import com.develoop.logs.LogServiceGrpcKt
 import io.grpc.ManagedChannel
-import io.grpc.ManagedChannelBuilder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import java.io.Closeable
 
+// Este es el constructor correcto que solo pide el canal
 class LogsRemoteDataSource(
-    host: String,
-    port: Int,
-    private val usePlaintext: Boolean = true
-) {
-    private val channel: ManagedChannel = ManagedChannelBuilder
-        .forAddress(host, port)
-        .apply {
-            if(usePlaintext) usePlaintext()
-        }
-        .build()
+    private val channel: ManagedChannel
+) : Closeable {
 
+    private val stub: LogServiceGrpcKt.LogServiceCoroutineStub =
+        LogServiceGrpcKt.LogServiceCoroutineStub(channel)
 
-    private val stub = LogServiceGrpcKt.LogServiceCoroutineStub(channel)
-
-
-    suspend fun send(request: LogApi.LogRequest): LogApi.LogResponse = withContext(Dispatchers.IO) {
-        stub.send(request)
+    suspend fun send(request: LogApi.LogRequest): LogApi.LogResponse {
+        // CORRECCIÓN: El nombre del método generado por gRPC usa CamelCase,
+        // por lo que es "SendLog" con 'S' mayúscula, no 'sendLog'.
+        return stub.send(request)
     }
 
-
-    fun shutdown() {
+    override fun close() {
         channel.shutdownNow()
     }
 }

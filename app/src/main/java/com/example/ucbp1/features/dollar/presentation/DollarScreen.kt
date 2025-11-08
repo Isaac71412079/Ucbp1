@@ -10,27 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.foundation.layout.fillMaxWidth
+
 @Composable
 fun DollarScreen(
     viewModelDollar: DollarViewModel = koinViewModel()
 ) {
     val state by viewModelDollar.uiState.collectAsState()
 
+    // --- CAMBIO 1: Usar Column de Compose en lugar de TableInfo.Column de Room ---
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,12 +26,13 @@ fun DollarScreen(
         verticalArrangement = Arrangement.Center
     ) {
         when (val stateValue = state) {
-            DollarViewModel.DollarUIState.Loading -> CircularProgressIndicator()
+            is DollarViewModel.DollarUIState.Loading -> CircularProgressIndicator()
             is DollarViewModel.DollarUIState.Error -> Text(
                 text = stateValue.message,
                 color = MaterialTheme.colorScheme.error
             )
             is DollarViewModel.DollarUIState.Success -> {
+                // --- CAMBIO 2: Ahora 'dollar' es un objeto Dollar, por lo que el código es válido ---
                 val dollar = stateValue.data
 
                 DollarCard(
@@ -53,6 +41,8 @@ fun DollarScreen(
                     sell = dollar.officialSell
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 DollarCard(
                     title = "Dólar Paralelo",
                     buy = dollar.parallelBuy,
@@ -60,7 +50,7 @@ fun DollarScreen(
                 )
 
                 dollar.lastUpdated?.let { timestamp ->
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Última actualización: ${formatDate(timestamp)}",
                         style = MaterialTheme.typography.bodySmall
@@ -76,47 +66,49 @@ fun DollarCard(title: String, buy: String?, sell: String?) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp), // Padding vertical reducido
-        shape = MaterialTheme.shapes.medium
+            .padding(vertical = 8.dp),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(30.dp), // Padding unificado
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Título centrado
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 12.dp),
                 fontWeight = FontWeight.Bold
             )
-            androidx.compose.foundation.layout.Row(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(horizontalAlignment = Alignment.Start) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Compra",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = buy ?: "--",
-                        style = MaterialTheme.typography.bodyLarge
+                        text = "$ ${buy ?: "--"}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
-                Column(horizontalAlignment = Alignment.End) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Venta",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = sell ?: "--",
-                        style = MaterialTheme.typography.bodyLarge
+                        text = "$ ${sell ?: "--"}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
@@ -126,6 +118,9 @@ fun DollarCard(title: String, buy: String?, sell: String?) {
 
 fun formatDate(timestamp: Long): String {
     val sdf = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
-    return sdf.format(java.util.Date(timestamp))
+    return try {
+        sdf.format(java.util.Date(timestamp))
+    } catch (e: Exception) {
+        "Fecha inválida"
+    }
 }
-
