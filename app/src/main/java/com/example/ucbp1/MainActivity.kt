@@ -140,10 +140,12 @@ class MainActivity : ComponentActivity() {
                     (currentDestination?.route?.startsWith(Screen.Atulado.route) == true)
 
         val navigationDrawerItems = listOf(
+            NavigationDrawer.Home,
             NavigationDrawer.Profile,
             NavigationDrawer.Dollar,
             NavigationDrawer.Movie,
-            NavigationDrawer.Github
+            NavigationDrawer.Github,
+            NavigationDrawer.Atulado
         )
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val coroutineScope = rememberCoroutineScope()

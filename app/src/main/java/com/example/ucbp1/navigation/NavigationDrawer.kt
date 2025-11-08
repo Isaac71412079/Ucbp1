@@ -13,6 +13,12 @@ sealed class NavigationDrawer(
     val route: String
 ) {
     // Usamos 'data object' para Singletons, es la práctica moderna
+    data object Home : NavigationDrawer(
+        "Home",
+        Icons.Filled.Home, // Icono más apropiado
+        Icons.Outlined.Home,
+        Screen.Home.route
+    )
     data object Profile : NavigationDrawer(
         "Profile",
         Icons.Filled.Person, // Icono más apropiado
